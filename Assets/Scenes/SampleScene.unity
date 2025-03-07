@@ -456,7 +456,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   EnemiesToSpawn: 8
-  EnemySeperationDistance: 1.56
+  EnemySeperationDistance: 1.89
 --- !u!4 &1215348553
 Transform:
   m_ObjectHideFlags: 0
