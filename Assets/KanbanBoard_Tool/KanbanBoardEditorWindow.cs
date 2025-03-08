@@ -1,5 +1,6 @@
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 public class KanbanBoardEditorWindow : EditorWindow
 {
@@ -8,7 +9,7 @@ public class KanbanBoardEditorWindow : EditorWindow
     [MenuItem("My Tools/Kanban Board")]
     public static void OpenWindow()
     {
-        var window = GetWindow<KanbanBoardEditorWindow>("Workflow Tracker & Planner");
+        var window = GetWindow<KanbanBoardEditorWindow>("Kanban Board");
         window.minSize = new Vector2(1000, 500);
     }
 
@@ -23,6 +24,17 @@ public class KanbanBoardEditorWindow : EditorWindow
             AssetDatabase.SaveAssets();
         }
 
-        //GenerateUI();
+        GenerateUI();
+    }
+
+    private void GenerateUI()
+    {
+        rootVisualElement.Clear();
+
+        var titleLabel = new Label("Workflow Tracker & Planner");
+        titleLabel.style.unityFontStyleAndWeight = FontStyle.Bold;
+        titleLabel.style.fontSize = 20;
+        titleLabel.style.marginBottom = 10;
+        rootVisualElement.Add(titleLabel);
     }
 }
