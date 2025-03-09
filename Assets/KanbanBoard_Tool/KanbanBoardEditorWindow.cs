@@ -29,12 +29,36 @@ public class KanbanBoardEditorWindow : EditorWindow
 
     private void GenerateUI()
     {
-        rootVisualElement.Clear();
+        // Importing in the UXML File
+        var visualTree = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>("Assets/KanbanBoard_Tool/Window_UI/KanbanBoardData.uxml");
+        if (visualTree != null)
+        {
+            VisualElement ui = visualTree.Instantiate();
+            rootVisualElement.Add(ui);
+        }
+        else
+        {
+            Debug.Log("UXML File not found, Check it exists and also check for correct path in code");
+        }
 
-        var titleLabel = new Label("Workflow Tracker & Planner");
-        titleLabel.style.unityFontStyleAndWeight = FontStyle.Bold;
-        titleLabel.style.fontSize = 20;
-        titleLabel.style.marginBottom = 10;
-        rootVisualElement.Add(titleLabel);
+        // Importing in the StyleSheet
+        var styleSheet = AssetDatabase.LoadAssetAtPath<StyleSheet>("Assets/KanbanBoard_Tool/Window_UI/KanbanBoard.uss");
+        if (styleSheet != null)
+        {
+            rootVisualElement.styleSheets.Add(styleSheet);
+        }
+        else
+        {
+            Debug.Log("StyleSheet not found, Check it exists and also check for correct path in code");
+        }
+
+        // VVV This is just manually adding a title through code VVV
+        //rootVisualElement.Clear();
+
+        //var titleLabel = new Label("Workflow Tracker & Planner");
+        //titleLabel.style.unityFontStyleAndWeight = FontStyle.Bold;
+        //titleLabel.style.fontSize = 20;
+        //titleLabel.style.marginBottom = 10;
+        //rootVisualElement.Add(titleLabel);
     }
 }
