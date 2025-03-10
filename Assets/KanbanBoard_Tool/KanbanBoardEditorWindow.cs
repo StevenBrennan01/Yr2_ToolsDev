@@ -6,7 +6,7 @@ public class KanbanBoardEditorWindow : EditorWindow
 {
     private KanbanBoardDataManager kanbanData;
 
-    [MenuItem("My Tools/Kanban Board")]
+    [MenuItem("My Tools/Custom Kanban Board")]
     public static void OpenWindow()
     {
         var window = GetWindow<KanbanBoardEditorWindow>("Kanban Board");
@@ -38,7 +38,7 @@ public class KanbanBoardEditorWindow : EditorWindow
         }
         else
         {
-            Debug.Log("UXML File not found, Check it exists and also check for correct path in code");
+            Debug.Log("UXML File not found, Check it exists and also check for correct path");
         }
 
         // Importing in the StyleSheet
@@ -49,16 +49,7 @@ public class KanbanBoardEditorWindow : EditorWindow
         }
         else
         {
-            Debug.Log("StyleSheet not found, Check it exists and also check for correct path in code");
+            Debug.Log("StyleSheet not found, Check it exists and also check for correct path");
         }
-
-        // VVV This is just manually adding a title through code VVV
-        //rootVisualElement.Clear();
-
-        //var titleLabel = new Label("Workflow Tracker & Planner");
-        //titleLabel.style.unityFontStyleAndWeight = FontStyle.Bold;
-        //titleLabel.style.fontSize = 20;
-        //titleLabel.style.marginBottom = 10;
-        //rootVisualElement.Add(titleLabel);
     }
 }
