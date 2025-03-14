@@ -1,4 +1,11 @@
-<engine:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:engine="UnityEngine.UIElements" xmlns:editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
-    <engine:Label text="Planner &amp; Tracker" style="color: rgb(0, 186, 255); font-size: 35px;" />
-    <engine:TextField label="Task:" placeholder-text="filler text" style="font-size: 15px;" />
+<engine:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:engine="UnityEngine.UIElements" xmlns:editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="True">
+    <engine:VisualElement name="Container" style="flex-grow: 1;">
+        <engine:VisualElement name="TitleContainer" style="flex-grow: 1;">
+            <engine:Label text="Kanban Board" name="Title" style="color: rgb(255, 255, 255); font-size: 35px; -unity-font-style: bold; right: -390px; padding-right: 368px; height: 40px; width: 782px; margin-right: -532px; opacity: 1; position: relative;" />
+        </engine:VisualElement>
+    </engine:VisualElement>
+    <engine:VisualElement style="flex-grow: 1;">
+        <engine:Button text="Button" style="max-width: 110px;" />
+        <engine:Button text="Button" style="max-width: 110px;" />
+    </engine:VisualElement>
 </engine:UXML>
