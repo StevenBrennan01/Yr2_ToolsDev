@@ -24,6 +24,7 @@ public class KanbanBoardEditorWindow : EditorWindow
             AssetDatabase.SaveAssets();
         }
 
+        rootVisualElement.Clear();
         GenerateUI();
     }
 
