@@ -13,21 +13,6 @@ MonoBehaviour:
   m_Name: KanbanBoardDataManager
   m_EditorClassIdentifier: 
   Tasks:
-  - taskTitle: New Task
-    taskDescription: awdaw
-    state: 0
-  - taskTitle: New Task
-    taskDescription: 
-    state: 0
-  - taskTitle: New Task
-    taskDescription: 
-    state: 0
-  - taskTitle: New Task
-    taskDescription: 
-    state: 0
-  - taskTitle: New Task
-    taskDescription: 
-    state: 0
-  - taskTitle: New Task
-    taskDescription: 
+  - taskTitle: dydh
+    taskDescription: dh
     state: 0
