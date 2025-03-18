@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Tasks:
   - taskTitle: New Task
-    taskDescription: 
+    taskDescription: awdaw
     state: 0
   - taskTitle: New Task
     taskDescription: 

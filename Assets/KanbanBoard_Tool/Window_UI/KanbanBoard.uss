@@ -1,1 +1,6 @@
- VisualElement {}
+.header {
+}
+
+.boardeditor {
+    margin-right: 10px;
+}
