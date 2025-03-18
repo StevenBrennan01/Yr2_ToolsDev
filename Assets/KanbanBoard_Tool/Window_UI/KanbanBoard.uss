@@ -1,1 +1,13 @@
+<<<<<<< Updated upstream
  VisualElement {}
+=======
+.header {
+}
+
+.taskboard {
+    margin-right: 10px;
+}
+
+.boardeditor {
+}
+>>>>>>> Stashed changes

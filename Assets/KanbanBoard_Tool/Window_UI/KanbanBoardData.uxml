@@ -1,4 +1,28 @@
+<<<<<<< Updated upstream
 <engine:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:engine="UnityEngine.UIElements" xmlns:editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
     <engine:Label text="Label" style="color: rgb(0, 255, 248); font-size: 63px;" />
     <engine:TextField label="Task:" placeholder-text="filler text" style="font-size: 15px;" />
+=======
+<engine:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:engine="UnityEngine.UIElements" xmlns:editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="True">
+    <Style src="project://database/Assets/KanbanBoard_Tool/Window_UI/KanbanBoard.uss?fileID=7433441132597879392&amp;guid=c3588b6f2082c144d9603d9b3dfe6c6a&amp;type=3#KanbanBoard" />
+    <engine:VisualElement name="KanbanContainer" style="flex-grow: 1; flex-direction: column;">
+        <engine:VisualElement name="TitleContainer" style="flex-grow: 1; flex-direction: column; font-size: 35px; -unity-font-style: bold; padding-left: 0; padding-right: 0; padding-top: 0; padding-bottom: 0; margin-bottom: 0; margin-top: 0; align-content: flex-start; justify-content: flex-start; align-items: center;">
+            <engine:Label text="Kanban Board" name="TitleLabel" class="header" />
+        </engine:VisualElement>
+        <engine:VisualElement name="TaskBoards" style="flex-grow: 1; flex-direction: row; justify-content: flex-start; padding-top: 25px; padding-right: 25px; padding-bottom: 25px; padding-left: 25px; translate: 150px 0;">
+            <engine:VisualElement name="BoardEditor" class="taskboard" style="height: 350px; width: 225px; color: rgb(255, 255, 255); border-left-color: rgb(0, 0, 0); border-right-color: rgb(0, 0, 0); border-top-color: rgb(0, 0, 0); border-bottom-color: rgb(0, 0, 0); border-top-width: 2px; border-right-width: 2px; border-bottom-width: 2px; border-left-width: 2px; background-color: rgb(46, 46, 46); margin-bottom: 0; margin-left: 0; align-items: center; translate: 4px 0; max-width: 220px; max-height: 365px; padding-bottom: 0;">
+                <engine:Label text="Board Editor&#10;" name="EditorTitle" style="align-items: auto; align-self: center; justify-content: flex-start; font-size: 16px; -unity-font-style: bold;" />
+            </engine:VisualElement>
+            <engine:VisualElement name="BoardEditor" class="taskboard" style="height: 350px; width: 225px; color: rgb(255, 255, 255); border-left-color: rgb(0, 0, 0); border-right-color: rgb(0, 0, 0); border-top-color: rgb(0, 0, 0); border-bottom-color: rgb(0, 0, 0); border-top-width: 2px; border-right-width: 2px; border-bottom-width: 2px; border-left-width: 2px; background-color: rgb(46, 46, 46); margin-bottom: 0; margin-left: 0; align-items: center; translate: 4px 0; max-width: 220px; max-height: 365px; padding-bottom: 0;">
+                <engine:Label text="Board Editor&#10;" name="EditorTitle" style="align-items: auto; align-self: center; justify-content: flex-start; font-size: 16px; -unity-font-style: bold;" />
+            </engine:VisualElement>
+            <engine:VisualElement name="BoardEditor" class="taskboard" style="height: 350px; width: 225px; color: rgb(255, 255, 255); border-left-color: rgb(0, 0, 0); border-right-color: rgb(0, 0, 0); border-top-color: rgb(0, 0, 0); border-bottom-color: rgb(0, 0, 0); border-top-width: 2px; border-right-width: 2px; border-bottom-width: 2px; border-left-width: 2px; background-color: rgb(46, 46, 46); margin-bottom: 0; margin-left: 0; align-items: center; translate: 4px 0; max-width: 220px; max-height: 365px; padding-bottom: 0;">
+                <engine:Label text="Board Editor&#10;" name="EditorTitle" style="align-items: auto; align-self: center; justify-content: flex-start; font-size: 16px; -unity-font-style: bold;" />
+            </engine:VisualElement>
+        </engine:VisualElement>
+        <engine:VisualElement name="BoardEditor" class="boardeditor" style="height: 600px; width: 200px; color: rgb(255, 255, 255); border-left-color: rgb(0, 0, 0); border-right-color: rgb(0, 0, 0); border-top-color: rgb(0, 0, 0); border-bottom-color: rgb(0, 0, 0); border-top-width: 2px; border-right-width: 2px; border-bottom-width: 2px; border-left-width: 2px; background-color: rgb(46, 46, 46); margin-bottom: 0; margin-left: 0; align-items: center; translate: 4px -100px; max-width: 220px; max-height: 365px; padding-bottom: 0; flex-grow: 1;">
+            <engine:Label text="Board Editor&#10;" name="EditorTitle" style="align-items: auto; align-self: center; justify-content: flex-start; font-size: 16px; -unity-font-style: bold;" />
+        </engine:VisualElement>
+    </engine:VisualElement>
+>>>>>>> Stashed changes
 </engine:UXML>
