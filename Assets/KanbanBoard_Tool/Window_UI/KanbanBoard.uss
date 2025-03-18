@@ -1,6 +1,9 @@
 .header {
 }
 
-.boardeditor {
+.taskBoard {
     margin-right: 10px;
+}
+
+.boardEditor {
 }
