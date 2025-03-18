@@ -30,6 +30,8 @@ public class KanbanBoardEditorWindow : EditorWindow
 
     private void GenerateUI()
     {
+        #region Importing UXML & StyleSheet
+
         // Importing in the UXML File
         var visualTree = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>("Assets/KanbanBoard_Tool/Window_UI/KanbanBoardData.uxml");
         if (visualTree != null)
@@ -52,6 +54,8 @@ public class KanbanBoardEditorWindow : EditorWindow
         {
             Debug.Log("StyleSheet not found, Check it exists and also check for correct path");
         }
+
+        #endregion
 
 
     }
