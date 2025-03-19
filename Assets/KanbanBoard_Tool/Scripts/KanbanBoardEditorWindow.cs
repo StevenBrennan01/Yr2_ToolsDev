@@ -24,6 +24,8 @@ public class KanbanBoardEditorWindow : EditorWindow
             AssetDatabase.SaveAssets();
         }
 
+        EditorUtility.SetDirty(kanbanData);
+
         rootVisualElement.Clear();
         GenerateUI();
     }
@@ -44,14 +46,44 @@ public class KanbanBoardEditorWindow : EditorWindow
             if (taskListView != null)
             {
                 taskListView.itemsSource = kanbanData.Tasks;
-                taskListView.makeItem = () => new Label();
+
+                taskListView.makeItem = () =>
+                {
+                    VisualElement container = new VisualElement();
+                    TextField nameField = new TextField();
+                    TextField descriptionField = new TextField();
+                    EnumField stateDropdown = new EnumField(KanbanTaskState.ToDo); // Default value
+
+                    nameField.name = "TaskNameField";
+                    descriptionField.name = "TaskDescriptionField";
+                    stateDropdown.name = "TaskStateDropdown";
+
+                    container.Add(nameField);
+                    container.Add(descriptionField);
+                    container.Add(stateDropdown);
+
+                    return container;
+                };
                 taskListView.bindItem = (element, index) =>
                 {
-                    Label label = element as Label;
-                    label.text = kanbanData.Tasks[index].taskTitle;
+                    KanbanTask task = kanbanData.Tasks[index];
+
+                    TextField nameField = element.Q<TextField>("TaskNameField");
+                    TextField descriptionField = element.Q<TextField>("TaskDescriptionField");
+                    EnumField stateDropdown = element.Q<EnumField>("TaskStateDropdown");
+
+                    // Bind data
+                    nameField.value = task.taskTitle;
+                    descriptionField.value = task.taskDescription;
+                    stateDropdown.value = task.state;
+
+                    nameField.RegisterValueChangedCallback(evt => task.taskTitle = evt.newValue);
+                    descriptionField.RegisterValueChangedCallback(evt => task.taskDescription = evt.newValue);
+                    stateDropdown.RegisterValueChangedCallback(evt => task.state = (KanbanTaskState)evt.newValue);
                 };
 
                 taskListView.Rebuild();
+                taskListView.RefreshItems();
             }
         }
         else
@@ -74,5 +106,11 @@ public class KanbanBoardEditorWindow : EditorWindow
         #endregion
 
         #endregion
+    }
+
+    private void SaveData()
+    {
+        EditorUtility.SetDirty(kanbanData);
+        AssetDatabase.SaveAssets();
     }
 }
