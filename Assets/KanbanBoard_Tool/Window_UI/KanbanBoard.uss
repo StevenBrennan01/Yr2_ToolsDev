@@ -28,6 +28,7 @@
     max-width: none;
     min-height: 650px;
     min-width: 130px;
+    background-color: rgba(0, 0, 0, 0);
 }
 
 .boardEditor {
@@ -37,7 +38,5 @@
 }
 
 .taskCard {
-}
-
-.columnColourSelector {
+    margin-bottom: 5px;
 }
