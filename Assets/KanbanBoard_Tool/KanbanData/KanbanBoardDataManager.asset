@@ -12,7 +12,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4047943f4df3a3d46b24b4f9f962f982, type: 3}
   m_Name: KanbanBoardDataManager
   m_EditorClassIdentifier: 
-  Tasks:
-  - taskTitle: dydh
-    taskDescription: dh
-    state: 0
+  Tasks: []
