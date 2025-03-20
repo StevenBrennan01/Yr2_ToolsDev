@@ -27,8 +27,6 @@ public class KanbanBoardEditorWindow : EditorWindow
             Debug.Log("Created new KanbanBoardDataManager asset.");
         }
 
-        Debug.Log($"Kanban data found: {kanbanData != null}, Path: {dataAssetPath}");
-
         EditorUtility.SetDirty(kanbanData);
 
         rootVisualElement.Clear();
@@ -61,15 +59,15 @@ public class KanbanBoardEditorWindow : EditorWindow
                 taskListView.makeItem = () =>
                 {
                     VisualElement container = new VisualElement();
-                    TextField nameField = new TextField();
+                    TextField titleField = new TextField();
                     TextField descriptionField = new TextField();
                     EnumField stateDropdown = new EnumField(KanbanTaskState.ToDo); // Default value
 
-                    nameField.name = "TaskNameField";
+                    titleField.name = "TaskTitleField";
                     descriptionField.name = "TaskDescriptionField";
                     stateDropdown.name = "TaskStateDropdown";
 
-                    container.Add(nameField);
+                    container.Add(titleField);
                     container.Add(descriptionField);
                     container.Add(stateDropdown);
 
