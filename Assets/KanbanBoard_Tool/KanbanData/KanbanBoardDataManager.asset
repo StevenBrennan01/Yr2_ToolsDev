@@ -13,6 +13,5 @@ MonoBehaviour:
   m_Name: KanbanBoardDataManager
   m_EditorClassIdentifier: 
   Tasks:
-  - taskTitle: 
-    taskDescription: 
-    state: 1
+  - taskTitle: Task to do
+    taskState: 0

@@ -1,3 +1,5 @@
+using System;
+using Unity.VisualScripting;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.UIElements;
@@ -44,56 +46,15 @@ public class KanbanBoardEditorWindow : EditorWindow
             VisualElement ui = visualTree.Instantiate();
             rootVisualElement.Add(ui);
 
-            ListView taskListView = rootVisualElement.Q<ListView>("TaskListView");
-
-            if (taskListView != null)
+            if (kanbanData.Tasks.Count == 0)
             {
+                Debug.Log("No tasks found in the data manager.");
+            }
 
-                if (kanbanData.Tasks.Count == 0)
-                {
-                    Debug.Log("No tasks found within the Kanban Board Data Manager");
-                }
-
-                taskListView.itemsSource = kanbanData.Tasks;
-
-                taskListView.makeItem = () =>
-                {
-                    VisualElement container = new VisualElement();
-                    TextField titleField = new TextField();
-                    TextField descriptionField = new TextField();
-                    EnumField stateDropdown = new EnumField(KanbanTaskState.ToDo);
-
-                    titleField.name = "TaskTitleField";
-                    descriptionField.name = "TaskDescriptionField";
-                    stateDropdown.name = "TaskStateDropdown";
-
-                    container.Add(titleField);
-                    container.Add(descriptionField);
-                    container.Add(stateDropdown);
-
-                    return container;
-                };
-
-                taskListView.bindItem = (element, index) =>
-                {
-                    KanbanTask task = kanbanData.Tasks[index];
-
-                    TextField titleField = element.Q<TextField>("TaskTitleField");
-                    TextField descriptionField = element.Q<TextField>("TaskDescriptionField");
-                    EnumField stateDropdown = element.Q<EnumField>("TaskStateDropdown");
-
-                    // Bind data
-                    titleField.value = task.taskTitle;
-                    descriptionField.value = task.taskDescription;
-                    stateDropdown.value = task.state;
-
-                    titleField.RegisterValueChangedCallback(evt => task.taskTitle = evt.newValue);
-                    descriptionField.RegisterValueChangedCallback(evt => task.taskDescription = evt.newValue);
-                    stateDropdown.RegisterValueChangedCallback(evt => task.state = (KanbanTaskState)evt.newValue);
-                };
-
-                taskListView.Rebuild();
-                taskListView.RefreshItems();
+            // Generating Task Cards
+            foreach (var task in kanbanData.Tasks)
+            {
+                VisualElement taskCard = CreateTaskCard(task);
             }
         }
         else
@@ -113,6 +74,40 @@ public class KanbanBoardEditorWindow : EditorWindow
         }
 
         #endregion
+    }
+
+    private VisualElement CreateTaskCard(KanbanTask task)
+    {
+        // Loading individual cards into UXML depending on how many tasks exist
+        var visualTree = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>("Assets/KanbanBoard_Tool/Window_UI/TaskCard.uxml");
+        VisualElement taskCard = visualTree.CloneTree();
+
+        TextField taskText = taskCard.Q<TextField>("TaskText");
+        EnumField stateDropdown = taskCard.Q<EnumField>("TaskState");
+
+        taskText.value = task.taskTitle;
+        stateDropdown.value = task.taskState;
+
+        taskCard.RegisterCallback<PointerDownEvent>(evt => OnTaskPointerDown(evt, taskCard));
+        taskCard.RegisterCallback<PointerDownEvent>(evt => OnTaskPointerDown(evt, taskCard));
+        taskCard.RegisterCallback<PointerDownEvent>(evt => OnTaskPointerDown(evt, taskCard));
+
+        return taskCard;
+    }
+
+    private void OnTaskPointerDown(PointerDownEvent evt, VisualElement taskCard)
+    {
+        //implement logic for dragging the task card
+    }
+
+    private void OnTaskPointerMove(PointerMoveEvent evt, VisualElement taskCard)
+    {
+        //implement logic for moving the task card
+    }
+
+    private void OnTaskPointerUp(PointerUpEvent evt, VisualElement taskCard)
+    {
+        //implement logic for dropping the task card
     }
 
     private void SaveData()

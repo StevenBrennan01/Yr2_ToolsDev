@@ -11,8 +11,7 @@ public class KanbanBoardDataManager : ScriptableObject
 public class KanbanTask
 {
     public string taskTitle;
-    public string taskDescription;
-    public KanbanTaskState state;
+    public KanbanTaskState taskState;
 }
 
 public enum KanbanTaskState
@@ -20,5 +19,5 @@ public enum KanbanTaskState
     ToDo,
     InProgress,
     ToPolish,
-    Complete
+    Finished
 }
