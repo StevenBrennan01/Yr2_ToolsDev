@@ -37,12 +37,6 @@ public class KanbanBoardEditorWindow : EditorWindow
 
     private void GenerateUI()
     {
-        if (kanbanData != null)
-        {
-            Debug.Log("Kanban data is assigned correctly");
-            return;
-        }
-
         #region Importing UXML & StyleSheet
 
         // Importing in the UXML File
