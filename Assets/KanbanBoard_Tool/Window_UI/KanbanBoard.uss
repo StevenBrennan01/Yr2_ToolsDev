@@ -1,13 +1,42 @@
-<<<<<<< Updated upstream
- VisualElement {}
-=======
 .header {
 }
 
-.taskboard {
-    margin-right: 10px;
+.boardHeaders {
+    width: 0;
+    min-width: 140px;
+    -unity-font-style: bold;
+    -unity-text-align: upper-center;
+    white-space: normal;
+    text-overflow: clip;
+    letter-spacing: 8px;
+    word-spacing: 0;
+    background-color: rgba(198, 198, 198, 0);
+    -unity-background-image-tint-color: rgba(255, 255, 255, 0);
+    -unity-text-outline-color: rgba(255, 255, 255, 0);
+    border-left-color: rgb(0, 255, 149);
+    border-right-color: rgb(0, 255, 149);
+    border-top-color: rgb(0, 255, 149);
+    border-bottom-color: rgb(0, 255, 149);
+    border-top-width: 2px;
+    border-right-width: 2px;
+    border-bottom-width: 2px;
+    border-left-width: 2px;
 }
 
-.boardeditor {
+.taskBoard {
+    margin-right: 10px;
+    max-width: none;
+    min-height: 620px;
+    min-width: 130px;
+    background-color: rgba(0, 0, 0, 0);
 }
->>>>>>> Stashed changes
+
+.boardEditor {
+}
+
+.cardContainer {
+}
+
+.taskCard {
+    margin-bottom: 5px;
+}
