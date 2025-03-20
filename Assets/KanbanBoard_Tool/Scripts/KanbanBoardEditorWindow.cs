@@ -15,7 +15,7 @@ public class KanbanBoardEditorWindow : EditorWindow
 
     private void OnEnable()
     {
-        string dataAssetPath = "Assets/KanbanBoard_Tool/Scripts/KanbanBoardDataManager.asset";
+        string dataAssetPath = "Assets/KanbanBoard_Tool/KanbanData/KanbanBoardDataManager.asset";
 
         kanbanData = AssetDatabase.LoadAssetAtPath<KanbanBoardDataManager>(dataAssetPath);
 
@@ -73,26 +73,27 @@ public class KanbanBoardEditorWindow : EditorWindow
 
                     return container;
                 };
+
                 taskListView.bindItem = (element, index) =>
                 {
                     KanbanTask task = kanbanData.Tasks[index];
 
-                    TextField nameField = element.Q<TextField>("TaskNameField");
+                    TextField titleField = element.Q<TextField>("TaskTitleField");
                     TextField descriptionField = element.Q<TextField>("TaskDescriptionField");
                     EnumField stateDropdown = element.Q<EnumField>("TaskStateDropdown");
 
                     // Bind data
-                    nameField.value = task.taskTitle;
+                    titleField.value = task.taskTitle;
                     descriptionField.value = task.taskDescription;
                     stateDropdown.value = task.state;
 
-                    nameField.RegisterValueChangedCallback(evt => task.taskTitle = evt.newValue);
+                    titleField.RegisterValueChangedCallback(evt => task.taskTitle = evt.newValue);
                     descriptionField.RegisterValueChangedCallback(evt => task.taskDescription = evt.newValue);
                     stateDropdown.RegisterValueChangedCallback(evt => task.state = (KanbanTaskState)evt.newValue);
                 };
 
                 taskListView.Rebuild();
-                taskListView.RefreshItems();
+                //taskListView.RefreshItems();
             }
         }
         else

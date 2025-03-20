@@ -13,12 +13,6 @@ MonoBehaviour:
   m_Name: KanbanBoardDataManager
   m_EditorClassIdentifier: 
   Tasks:
-  - taskTitle: awdaw
-    taskDescription: awdawdaw
-    state: 0
-  - taskTitle: agdrgdff
-    taskDescription: fgh
-    state: 2
-  - taskTitle: jk;jk;jk;
-    taskDescription: fghfgh
-    state: 3
+  - taskTitle: This is a task i gotta do
+    taskDescription: For this task i gotta do this thing
+    state: 1
