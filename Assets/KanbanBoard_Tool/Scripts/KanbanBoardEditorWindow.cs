@@ -15,14 +15,19 @@ public class KanbanBoardEditorWindow : EditorWindow
 
     private void OnEnable()
     {
-        kanbanData = AssetDatabase.LoadAssetAtPath<KanbanBoardDataManager>("Assets/KanbanBoard_Tool/Scripts/KanbanBoardDataManager.asset");
+        string dataAssetPath = "Assets/KanbanBoard_Tool/Scripts/KanbanBoardDataManager.asset";
+
+        kanbanData = AssetDatabase.LoadAssetAtPath<KanbanBoardDataManager>(dataAssetPath);
 
         if (kanbanData == null)
         {
             kanbanData = CreateInstance<KanbanBoardDataManager>();
-            AssetDatabase.CreateAsset(kanbanData, "Assets/KanbanBoard_Tool/KanbanData/KanbanBoardDataManager.asset");
+            AssetDatabase.CreateAsset(kanbanData, dataAssetPath);
             AssetDatabase.SaveAssets();
+            Debug.Log("Created new KanbanBoardDataManager asset.");
         }
+
+        Debug.Log($"Kanban data found: {kanbanData != null}, Path: {dataAssetPath}");
 
         EditorUtility.SetDirty(kanbanData);
 
@@ -32,9 +37,14 @@ public class KanbanBoardEditorWindow : EditorWindow
 
     private void GenerateUI()
     {
+        if (kanbanData != null)
+        {
+            Debug.Log("Kanban data is assigned correctly");
+            return;
+        }
+
         #region Importing UXML & StyleSheet
 
-        #region VisualElement Importing
         // Importing in the UXML File
         var visualTree = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>("Assets/KanbanBoard_Tool/Window_UI/KanbanBoardData.uxml");
         if (visualTree != null)
@@ -43,8 +53,15 @@ public class KanbanBoardEditorWindow : EditorWindow
             rootVisualElement.Add(ui);
 
             ListView taskListView = rootVisualElement.Q<ListView>("TaskListView");
+
             if (taskListView != null)
             {
+
+                if (kanbanData.Tasks.Count == 0)
+                {
+                    Debug.Log("No tasks found within the Kanban Board Data Manager");
+                }
+
                 taskListView.itemsSource = kanbanData.Tasks;
 
                 taskListView.makeItem = () =>
@@ -90,9 +107,7 @@ public class KanbanBoardEditorWindow : EditorWindow
         {
             Debug.Log("UXML File not found, Check it exists and also check for correct path");
         }
-        #endregion
 
-        #region StyleSheet Importing
         // Importing in the StyleSheet
         var styleSheet = AssetDatabase.LoadAssetAtPath<StyleSheet>("Assets/KanbanBoard_Tool/Window_UI/KanbanBoard.uss");
         if (styleSheet != null)
@@ -103,7 +118,6 @@ public class KanbanBoardEditorWindow : EditorWindow
         {
             Debug.Log("StyleSheet not found, Check it exists and also check for correct path");
         }
-        #endregion
 
         #endregion
     }
