@@ -29,6 +29,7 @@ public class KanbanBoardEditorWindow : EditorWindow
             Debug.Log("Created new KanbanBoardDataManager asset.");
         }
 
+        // Save the data when the window is closed
         EditorUtility.SetDirty(kanbanData);
 
         rootVisualElement.Clear();
@@ -40,21 +41,59 @@ public class KanbanBoardEditorWindow : EditorWindow
         #region Importing UXML & StyleSheet
 
         // Importing in the UXML File
-        var visualTree = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>("Assets/KanbanBoard_Tool/Window_UI/KanbanBoardData.uxml");
+        var visualTree = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>("Assets/KanbanBoard_Tool/Window_UI/KanbanBoard.uxml");
         if (visualTree != null)
         {
             VisualElement ui = visualTree.Instantiate();
             rootVisualElement.Add(ui);
+
+            VisualElement toDoColumn = rootVisualElement.Q<VisualElement>("ToDoColumn");
+            VisualElement inProgressColumn = rootVisualElement.Q<VisualElement>("InProgressColumn");
+            VisualElement toPolishColumn = rootVisualElement.Q<VisualElement>("ToPolishColumn");
+            VisualElement finishedColumn = rootVisualElement.Q<VisualElement>("FinishedColumn");
 
             if (kanbanData.Tasks.Count == 0)
             {
                 Debug.Log("No tasks found in the data manager.");
             }
 
-            // Generating Task Cards
-            foreach (var task in kanbanData.Tasks)
+            var taskCardTemplate = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>("Assets/KanbanBoard_Tool/Window_UI/TaskCard.uxml");
+            if (taskCardTemplate != null)
             {
-                VisualElement taskCard = CreateTaskCard(task);
+                // Generating Task Cards
+                foreach (var task in kanbanData.Tasks)
+                {
+                    // Instantiating a card for each task that exists
+                    VisualElement taskCard = taskCardTemplate.Instantiate();
+
+                    if (taskCard == null)
+                    {
+                        Debug.Log("Instantiating TaskCard failed");
+                        continue;
+                    }
+
+                    CreateTaskCard(taskCard, task);
+
+                    switch (task.taskState)
+                    {
+                        case KanbanTaskState.ToDo:
+                            toDoColumn.Add(taskCard);
+                            break;
+                        case KanbanTaskState.InProgress:
+                            inProgressColumn.Add(taskCard);
+                            break;
+                        case KanbanTaskState.ToPolish:
+                            toPolishColumn.Add(taskCard);
+                            break;
+                        case KanbanTaskState.Finished:
+                            finishedColumn.Add(taskCard);
+                            break;
+                    }
+                }
+            }
+            else
+            {
+                Debug.Log("Cannot find TaskCard.uxml file. Check the path and file name.");
             }
         }
         else
@@ -76,11 +115,9 @@ public class KanbanBoardEditorWindow : EditorWindow
         #endregion
     }
 
-    private VisualElement CreateTaskCard(KanbanTask task)
+    private VisualElement CreateTaskCard(VisualElement taskCard ,KanbanTask task)
     {
         // Loading individual cards into UXML depending on how many tasks exist
-        var visualTree = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>("Assets/KanbanBoard_Tool/Window_UI/TaskCard.uxml");
-        VisualElement taskCard = visualTree.CloneTree();
 
         TextField taskText = taskCard.Q<TextField>("TaskText");
         EnumField stateDropdown = taskCard.Q<EnumField>("TaskState");
@@ -88,9 +125,14 @@ public class KanbanBoardEditorWindow : EditorWindow
         taskText.value = task.taskTitle;
         stateDropdown.value = task.taskState;
 
+        // Register callbacks for updating the task data
+        taskText.RegisterValueChangedCallback(evt => task.taskTitle = evt.newValue);
+        stateDropdown.RegisterValueChangedCallback(evt => task.taskState = (KanbanTaskState)evt.newValue);
+
+        // Register callbacks for drag and drop
         taskCard.RegisterCallback<PointerDownEvent>(evt => OnTaskPointerDown(evt, taskCard));
-        taskCard.RegisterCallback<PointerDownEvent>(evt => OnTaskPointerDown(evt, taskCard));
-        taskCard.RegisterCallback<PointerDownEvent>(evt => OnTaskPointerDown(evt, taskCard));
+        taskCard.RegisterCallback<PointerMoveEvent>(evt => OnTaskPointerMove(evt, taskCard));
+        taskCard.RegisterCallback<PointerUpEvent>(evt => OnTaskPointerUp(evt, taskCard));
 
         return taskCard;
     }

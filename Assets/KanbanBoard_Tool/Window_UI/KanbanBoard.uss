@@ -33,10 +33,3 @@
 
 .boardEditor {
 }
-
-.cardContainer {
-}
-
-.taskCard {
-    margin-bottom: 5px;
-}
