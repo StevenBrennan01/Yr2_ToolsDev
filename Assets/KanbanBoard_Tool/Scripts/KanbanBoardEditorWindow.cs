@@ -61,7 +61,7 @@ public class KanbanBoardEditorWindow : EditorWindow
                     VisualElement container = new VisualElement();
                     TextField titleField = new TextField();
                     TextField descriptionField = new TextField();
-                    EnumField stateDropdown = new EnumField(KanbanTaskState.ToDo); // Default value
+                    EnumField stateDropdown = new EnumField(KanbanTaskState.ToDo);
 
                     titleField.name = "TaskTitleField";
                     descriptionField.name = "TaskDescriptionField";
@@ -93,7 +93,7 @@ public class KanbanBoardEditorWindow : EditorWindow
                 };
 
                 taskListView.Rebuild();
-                //taskListView.RefreshItems();
+                taskListView.RefreshItems();
             }
         }
         else
