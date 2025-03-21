@@ -66,8 +66,6 @@ public class KanbanBoardEditorWindow : EditorWindow
             var taskCardTemplate = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>("Assets/KanbanBoard_Tool/Window_UI/TaskCard.uxml");
             if (taskCardTemplate != null)
             {
-
-
                 // Generating Task Cards
                 foreach (var task in kanbanData.Tasks)
                 {
@@ -139,7 +137,7 @@ public class KanbanBoardEditorWindow : EditorWindow
         stateDropdown.Init(KanbanTaskState.ToDo);
         stateDropdown.value = task.taskState;
 
-        // Register callbacks for updating the task data
+        // Register callbacks for updating the task data (task, state, colour)
         taskColour.RegisterValueChangedCallback(evt  => task.taskColour = evt.newValue);
         taskText.RegisterValueChangedCallback(evt => task.taskText = evt.newValue);
         stateDropdown.RegisterValueChangedCallback(evt => task.taskState = (KanbanTaskState)evt.newValue);
