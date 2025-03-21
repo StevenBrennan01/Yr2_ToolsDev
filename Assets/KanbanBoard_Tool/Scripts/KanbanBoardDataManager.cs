@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using UnityEditor.UIElements;
 using UnityEngine;
 
 [CreateAssetMenu(fileName = "KanbanBoardDataManager", menuName = "My Tools/Kanban Board Data Manager")]
@@ -10,8 +11,9 @@ public class KanbanBoardDataManager : ScriptableObject
 [System.Serializable]
 public class KanbanTask
 {
-    public string taskTitle;
+    public string taskText;
     public KanbanTaskState taskState;
+    public Color taskColour;
 }
 
 public enum KanbanTaskState

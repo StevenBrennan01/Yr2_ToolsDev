@@ -1,6 +1,5 @@
-using System;
-using Unity.VisualScripting;
 using UnityEditor;
+using UnityEditor.UIElements;
 using UnityEngine;
 using UnityEngine.UIElements;
 
@@ -47,10 +46,17 @@ public class KanbanBoardEditorWindow : EditorWindow
             VisualElement ui = visualTree.Instantiate();
             rootVisualElement.Add(ui);
 
+            // Column Types
             VisualElement toDoColumn = rootVisualElement.Q<VisualElement>("ToDoColumn");
             VisualElement inProgressColumn = rootVisualElement.Q<VisualElement>("InProgressColumn");
             VisualElement toPolishColumn = rootVisualElement.Q<VisualElement>("ToPolishColumn");
             VisualElement finishedColumn = rootVisualElement.Q<VisualElement>("FinishedColumn");
+
+            // Column Titles
+            VisualElement firstColumnTitle = rootVisualElement.Q<VisualElement>("FirstColumnTitle");
+            VisualElement secondColumnTitle = rootVisualElement.Q<VisualElement>("SecondColumnTitle");
+            VisualElement thirdColumnTitle = rootVisualElement.Q<VisualElement>("ThirdColumnTitle");
+            VisualElement fourthColumnTitle = rootVisualElement.Q<VisualElement>("FourthColumnTitle");
 
             if (kanbanData.Tasks.Count == 0)
             {
@@ -60,6 +66,8 @@ public class KanbanBoardEditorWindow : EditorWindow
             var taskCardTemplate = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>("Assets/KanbanBoard_Tool/Window_UI/TaskCard.uxml");
             if (taskCardTemplate != null)
             {
+
+
                 // Generating Task Cards
                 foreach (var task in kanbanData.Tasks)
                 {
@@ -121,13 +129,19 @@ public class KanbanBoardEditorWindow : EditorWindow
 
         TextField taskText = taskCard.Q<TextField>("TaskText");
         EnumField stateDropdown = taskCard.Q<EnumField>("TaskState");
+        ColorField taskColour = taskCard.Q<ColorField>("TaskColor");
+        
+        // Initializing the TaskText and Colour
+        taskText.value = task.taskText;
+        taskColour.value = task.taskColour;
 
-        taskText.value = task.taskTitle;
-        stateDropdown.Init(KanbanTaskState.ToDo); // Initialize the dropdown with this state as a default
+        // Initialize the dropdown with this state as a default
+        stateDropdown.Init(KanbanTaskState.ToDo);
         stateDropdown.value = task.taskState;
 
         // Register callbacks for updating the task data
-        taskText.RegisterValueChangedCallback(evt => task.taskTitle = evt.newValue);
+        taskColour.RegisterValueChangedCallback(evt  => task.taskColour = evt.newValue);
+        taskText.RegisterValueChangedCallback(evt => task.taskText = evt.newValue);
         stateDropdown.RegisterValueChangedCallback(evt => task.taskState = (KanbanTaskState)evt.newValue);
 
         // Register callbacks for drag and drop

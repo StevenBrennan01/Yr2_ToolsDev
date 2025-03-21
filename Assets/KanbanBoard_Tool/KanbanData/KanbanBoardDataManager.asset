@@ -13,11 +13,15 @@ MonoBehaviour:
   m_Name: KanbanBoardDataManager
   m_EditorClassIdentifier: 
   Tasks:
-  - taskTitle: this task is in progress
+  - taskText: 
     taskState: 1
-  - taskTitle: this is a new task
+    taskColour: {r: 1, g: 0.43164754, b: 0, a: 0}
+  - taskText: 
     taskState: 0
-  - taskTitle: this task is another in progress
+    taskColour: {r: 1, g: 0, b: 0, a: 0}
+  - taskText: 
     taskState: 1
-  - taskTitle: this task is finished
+    taskColour: {r: 1, g: 0.43137258, b: 0, a: 0}
+  - taskText: 
     taskState: 3
+    taskColour: {r: 0, g: 1, b: 0.09069872, a: 0}
