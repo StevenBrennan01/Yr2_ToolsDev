@@ -48,15 +48,16 @@ public class KanbanBoardEditorWindow : EditorWindow
 
             // Column Types (todo, in progress, to polish, finished) 
             // Look into allowing the user to add more columns
-            VisualElement toDoColumn = rootVisualElement.Q<VisualElement>("ToDoColumn");
-            VisualElement inProgressColumn = rootVisualElement.Q<VisualElement>("InProgressColumn");
-            VisualElement toPolishColumn = rootVisualElement.Q<VisualElement>("ToPolishColumn");
-            VisualElement finishedColumn = rootVisualElement.Q<VisualElement>("FinishedColumn");
+            VisualElement Column1 = rootVisualElement.Q<VisualElement>("Column1");
+            VisualElement Column2 = rootVisualElement.Q<VisualElement>("Column2");
+            VisualElement Column3 = rootVisualElement.Q<VisualElement>("Column3");
+            VisualElement Column4 = rootVisualElement.Q<VisualElement>("Column4");
 
             // Try make it so that tasks begin in the this column
             // And also attempt custom amount of columns
-            VisualElement addTaskColumn = rootVisualElement.Q<VisualElement>("NewTaskBox");
+            VisualElement NewTaskBox = rootVisualElement.Q<VisualElement>("NewTaskBox");
 
+            // Buttons to add and delete tasks
             Button addTaskButton = rootVisualElement.Q<Button>("AddTaskButton");
             Button deleteTaskButton = rootVisualElement.Q<Button>("DeleteTaskButton");
 
@@ -91,20 +92,19 @@ public class KanbanBoardEditorWindow : EditorWindow
                     switch (task.taskState)
                     {
                         case KanbanTaskState.ToDo:
-                            toDoColumn.Add(taskCard);
+                            Column1.Add(taskCard);
                             break;
                         case KanbanTaskState.InProgress:
-                            inProgressColumn.Add(taskCard);
+                            Column2.Add(taskCard);
                             break;
                         case KanbanTaskState.ToPolish:
-                            toPolishColumn.Add(taskCard);
+                            Column3.Add(taskCard);
                             break;
                         case KanbanTaskState.Finished:
-                            finishedColumn.Add(taskCard);
+                            Column4.Add(taskCard);
                             break;
-
                         case KanbanTaskState.NewTask:
-                            addTaskColumn.Add(taskCard);
+                            NewTaskBox.Add(taskCard);
                             break;
                     }
                 }
