@@ -123,6 +123,7 @@ public class KanbanBoardEditorWindow : EditorWindow
         EnumField stateDropdown = taskCard.Q<EnumField>("TaskState");
 
         taskText.value = task.taskTitle;
+        stateDropdown.Init(KanbanTaskState.ToDo); // Initialize the dropdown with this state as a default
         stateDropdown.value = task.taskState;
 
         // Register callbacks for updating the task data
