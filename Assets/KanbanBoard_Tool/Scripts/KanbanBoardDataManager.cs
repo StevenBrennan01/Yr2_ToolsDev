@@ -17,6 +17,7 @@ public class KanbanTask
 
 public enum KanbanTaskState
 {
+    NewTask,
     ToDo,
     InProgress,
     ToPolish,

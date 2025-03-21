@@ -46,13 +46,21 @@ public class KanbanBoardEditorWindow : EditorWindow
             VisualElement ui = visualTree.Instantiate();
             rootVisualElement.Add(ui);
 
-            // Column Types
+            // Column Types (todo, in progress, to polish, finished) 
+            // Look into allowing the user to add more columns
             VisualElement toDoColumn = rootVisualElement.Q<VisualElement>("ToDoColumn");
             VisualElement inProgressColumn = rootVisualElement.Q<VisualElement>("InProgressColumn");
             VisualElement toPolishColumn = rootVisualElement.Q<VisualElement>("ToPolishColumn");
             VisualElement finishedColumn = rootVisualElement.Q<VisualElement>("FinishedColumn");
 
-            // Column Titles
+            // Try make it so that tasks begin in the this column
+            // And also attempt custom amount of columns
+            VisualElement addTaskColumn = rootVisualElement.Q<VisualElement>("NewTaskBox");
+
+            Button addTaskButton = rootVisualElement.Q<Button>("AddTaskButton");
+            Button deleteTaskButton = rootVisualElement.Q<Button>("DeleteTaskButton");
+
+            // Column Titles (Text Fields)
             VisualElement firstColumnTitle = rootVisualElement.Q<VisualElement>("FirstColumnTitle");
             VisualElement secondColumnTitle = rootVisualElement.Q<VisualElement>("SecondColumnTitle");
             VisualElement thirdColumnTitle = rootVisualElement.Q<VisualElement>("ThirdColumnTitle");
@@ -93,6 +101,10 @@ public class KanbanBoardEditorWindow : EditorWindow
                             break;
                         case KanbanTaskState.Finished:
                             finishedColumn.Add(taskCard);
+                            break;
+
+                        case KanbanTaskState.NewTask:
+                            addTaskColumn.Add(taskCard);
                             break;
                     }
                 }
@@ -153,6 +165,7 @@ public class KanbanBoardEditorWindow : EditorWindow
     private void OnTaskPointerDown(PointerDownEvent evt, VisualElement taskCard)
     {
         //implement logic for dragging the task card
+        Debug.Log("Task card clicked");
     }
 
     private void OnTaskPointerMove(PointerMoveEvent evt, VisualElement taskCard)
@@ -163,11 +176,12 @@ public class KanbanBoardEditorWindow : EditorWindow
     private void OnTaskPointerUp(PointerUpEvent evt, VisualElement taskCard)
     {
         //implement logic for dropping the task card
+        Debug.Log("Task card dropped");
     }
 
-    private void SaveData()
-    {
-        EditorUtility.SetDirty(kanbanData);
-        AssetDatabase.SaveAssets();
-    }
+    //private void SaveData()
+    //{
+    //    // Save the data when the window loses focus
+    //    EditorUtility.SetDirty(kanbanData);
+    //}
 }

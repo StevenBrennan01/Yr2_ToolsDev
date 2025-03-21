@@ -13,15 +13,24 @@ MonoBehaviour:
   m_Name: KanbanBoardDataManager
   m_EditorClassIdentifier: 
   Tasks:
-  - taskText: 
+  - taskText: dawawdaw
     taskState: 1
-    taskColour: {r: 1, g: 0.43164754, b: 0, a: 0}
-  - taskText: 
-    taskState: 0
-    taskColour: {r: 1, g: 0, b: 0, a: 0}
-  - taskText: 
+    taskColour: {r: 0.9083557, g: 0.10160843, b: 0.10160843, a: 0}
+  - taskText: this i gotta do this
     taskState: 1
-    taskColour: {r: 1, g: 0.43137258, b: 0, a: 0}
-  - taskText: 
+    taskColour: {r: 0.909804, g: 0.10196079, b: 0.10196079, a: 0}
+  - taskText: in progress yeh
+    taskState: 4
+    taskColour: {r: 1, g: 0.5826266, b: 0.019607842, a: 0}
+  - taskText: another one
+    taskState: 1
+    taskColour: {r: 1, g: 0, b: 0.007320404, a: 0}
+  - taskText: awdawdw
     taskState: 3
-    taskColour: {r: 0, g: 1, b: 0.09069872, a: 0}
+    taskColour: {r: 0, g: 1, b: 0.1433804, a: 0}
+  - taskText: Doneee
+    taskState: 3
+    taskColour: {r: 0, g: 1, b: 0.1433804, a: 0}
+  - taskText: New task!
+    taskState: 0
+    taskColour: {r: 0, g: 0.7024243, b: 1, a: 0}

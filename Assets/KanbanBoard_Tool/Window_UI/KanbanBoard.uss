@@ -33,3 +33,9 @@
 
 .boardEditor {
 }
+
+.button {
+    height: 25px;
+    width: 165px;
+    translate: 35px 0;
+}
