@@ -34,3 +34,7 @@ MonoBehaviour:
   - taskText: New task!
     taskState: 0
     taskColour: {r: 0, g: 0.7024243, b: 1, a: 0}
+  column1Title: 'Tasks To Start:'
+  column2Title: 'Tasks Started:'
+  column3Title: 'Tasks to Polish:'
+  column4Title: 'Finished:'

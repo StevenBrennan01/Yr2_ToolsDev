@@ -5,6 +5,11 @@ using UnityEngine;
 public class KanbanBoardDataManager : ScriptableObject
 {
     public List<KanbanTask> Tasks = new List<KanbanTask>();
+
+    public string column1Title;
+    public string column2Title;
+    public string column3Title;
+    public string column4Title;
 }
 
 [System.Serializable]

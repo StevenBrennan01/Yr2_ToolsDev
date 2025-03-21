@@ -24,15 +24,17 @@ public class KanbanBoardEditorWindow : EditorWindow
         {
             kanbanData = CreateInstance<KanbanBoardDataManager>();
             AssetDatabase.CreateAsset(kanbanData, dataAssetPath);
-            AssetDatabase.SaveAssets();
             Debug.Log("Created new KanbanBoardDataManager asset.");
         }
 
-        // Save the data when the window is closed
-        EditorUtility.SetDirty(kanbanData);
-
         rootVisualElement.Clear();
         GenerateUI();
+    }
+
+    // Save the data when the window is closed
+    private void OnDisable()
+    {
+        SaveData();
     }
 
     private void GenerateUI()
@@ -55,17 +57,46 @@ public class KanbanBoardEditorWindow : EditorWindow
 
             // Try make it so that tasks begin in the this column
             // And also attempt custom amount of columns
-            VisualElement NewTaskBox = rootVisualElement.Q<VisualElement>("NewTaskBox");
+            VisualElement newTaskBox = rootVisualElement.Q<VisualElement>("NewTaskBox");
 
             // Buttons to add and delete tasks
             Button addTaskButton = rootVisualElement.Q<Button>("AddTaskButton");
             Button deleteTaskButton = rootVisualElement.Q<Button>("DeleteTaskButton");
 
             // Column Titles (Text Fields)
-            VisualElement firstColumnTitle = rootVisualElement.Q<VisualElement>("FirstColumnTitle");
-            VisualElement secondColumnTitle = rootVisualElement.Q<VisualElement>("SecondColumnTitle");
-            VisualElement thirdColumnTitle = rootVisualElement.Q<VisualElement>("ThirdColumnTitle");
-            VisualElement fourthColumnTitle = rootVisualElement.Q<VisualElement>("FourthColumnTitle");
+            TextField column1Title = rootVisualElement.Q<TextField>("FirstColumnTitle");
+            TextField column2Title = rootVisualElement.Q<TextField>("SecondColumnTitle");
+            TextField column3Title = rootVisualElement.Q<TextField>("ThirdColumnTitle");
+            TextField column4Title = rootVisualElement.Q<TextField>("FourthColumnTitle");
+
+            column1Title.value = kanbanData.column1Title;
+            column2Title.value = kanbanData.column2Title;
+            column3Title.value = kanbanData.column3Title;
+            column4Title.value = kanbanData.column4Title;
+
+            column1Title.RegisterValueChangedCallback(evt =>
+            {
+                kanbanData.column1Title = evt.newValue;
+                SaveData();
+            });
+
+            column2Title.RegisterValueChangedCallback(evt =>
+            {
+                kanbanData.column2Title = evt.newValue;
+                SaveData();
+            });
+
+            column3Title.RegisterValueChangedCallback(evt =>
+            {
+                kanbanData.column3Title = evt.newValue;
+                SaveData();
+            });
+
+            column4Title.RegisterValueChangedCallback(evt =>
+            {
+                kanbanData.column4Title = evt.newValue;
+                SaveData();
+            });
 
             if (kanbanData.Tasks.Count == 0)
             {
@@ -104,7 +135,7 @@ public class KanbanBoardEditorWindow : EditorWindow
                             Column4.Add(taskCard);
                             break;
                         case KanbanTaskState.NewTask:
-                            NewTaskBox.Add(taskCard);
+                            newTaskBox.Add(taskCard);
                             break;
                     }
                 }
@@ -150,9 +181,9 @@ public class KanbanBoardEditorWindow : EditorWindow
         stateDropdown.value = task.taskState;
 
         // Register callbacks for updating the task data (task, state, colour)
-        taskColour.RegisterValueChangedCallback(evt  => task.taskColour = evt.newValue);
         taskText.RegisterValueChangedCallback(evt => task.taskText = evt.newValue);
         stateDropdown.RegisterValueChangedCallback(evt => task.taskState = (KanbanTaskState)evt.newValue);
+        taskColour.RegisterValueChangedCallback(evt => task.taskColour = evt.newValue);
 
         // Register callbacks for drag and drop
         taskCard.RegisterCallback<PointerDownEvent>(evt => OnTaskPointerDown(evt, taskCard));
@@ -171,6 +202,7 @@ public class KanbanBoardEditorWindow : EditorWindow
     private void OnTaskPointerMove(PointerMoveEvent evt, VisualElement taskCard)
     {
         //implement logic for moving the task card
+        Debug.Log("Task card is moving");
     }
 
     private void OnTaskPointerUp(PointerUpEvent evt, VisualElement taskCard)
@@ -178,10 +210,14 @@ public class KanbanBoardEditorWindow : EditorWindow
         //implement logic for dropping the task card
         Debug.Log("Task card dropped");
     }
+    private void MarkDataDirty()
+    {
+        EditorUtility.SetDirty(kanbanData);
+    }
 
-    //private void SaveData()
-    //{
-    //    // Save the data when the window loses focus
-    //    EditorUtility.SetDirty(kanbanData);
-    //}
+    private void SaveData()
+    {
+        EditorUtility.SetDirty(kanbanData);
+        AssetDatabase.SaveAssets();
+    }
 }
