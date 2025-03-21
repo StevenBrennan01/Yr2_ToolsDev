@@ -13,11 +13,11 @@ MonoBehaviour:
   m_Name: KanbanBoardDataManager
   m_EditorClassIdentifier: 
   Tasks:
-  - taskTitle: this is a task to do
+  - taskTitle: this task is in progress
     taskState: 1
   - taskTitle: this is a new task
     taskState: 0
-  - taskTitle: this task is in progress
+  - taskTitle: this task is another in progress
     taskState: 1
   - taskTitle: this task is finished
     taskState: 3
