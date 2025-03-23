@@ -13,28 +13,28 @@ MonoBehaviour:
   m_Name: KanbanBoardDataManager
   m_EditorClassIdentifier: 
   Tasks:
-  - taskText: dawawdaw
-    taskState: 1
-    taskColour: {r: 0.9083557, g: 0.10160843, b: 0.10160843, a: 0}
-  - taskText: this i gotta do this
-    taskState: 1
-    taskColour: {r: 0.909804, g: 0.10196079, b: 0.10196079, a: 0}
-  - taskText: in progress yeh
-    taskState: 4
-    taskColour: {r: 1, g: 0.5826266, b: 0.019607842, a: 0}
-  - taskText: another one
-    taskState: 1
-    taskColour: {r: 1, g: 0, b: 0.007320404, a: 0}
-  - taskText: awdawdw
-    taskState: 3
-    taskColour: {r: 0, g: 1, b: 0.1433804, a: 0}
-  - taskText: Doneee
-    taskState: 3
-    taskColour: {r: 0, g: 1, b: 0.1433804, a: 0}
-  - taskText: New task!
+  - taskText: New task
     taskState: 0
-    taskColour: {r: 0, g: 0.7024243, b: 1, a: 0}
-  column1Title: 'Tasks To Start:'
-  column2Title: 'Tasks Started:'
+    taskColour: {r: 0.0039215684, g: 0.9812633, b: 1, a: 0}
+  - taskText: Task to do
+    taskState: 1
+    taskColour: {r: 1, g: 0.0047169924, b: 0.07803371, a: 0}
+  - taskText: Another task to do
+    taskState: 1
+    taskColour: {r: 1, g: 0.0047169924, b: 0.07803371, a: 0}
+  - taskText: A task that has begun
+    taskState: 2
+    taskColour: {r: 1, g: 0.87463886, b: 0.0039215684, a: 0}
+  - taskText: Need to finish this one
+    taskState: 2
+    taskColour: {r: 1, g: 0.87463886, b: 0.0039215684, a: 0}
+  - taskText: Gotta Polish!
+    taskState: 3
+    taskColour: {r: 0.71272045, g: 1, b: 0.0039215684, a: 0}
+  - taskText: Finished!!
+    taskState: 4
+    taskColour: {r: 0.0039215684, g: 1, b: 0.052882377, a: 0}
+  column1Title: 'Tasks to Start:'
+  column2Title: 'Tasks Begun:'
   column3Title: 'Tasks to Polish:'
   column4Title: 'Finished:'
