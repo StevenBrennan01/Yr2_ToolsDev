@@ -8,7 +8,7 @@ public class DebounceUtility
     private static float _debounceTime;
     private static float _lastActionTime;
 
-    // Delay/Debounce the action(saving) for the set time
+    // Delay/Debounce the action(saving and refreshing) for the set time
     public static void Debounce(Action action, float debounceTime)
     {
         _debouncedAction = action;

@@ -15,11 +15,11 @@ MonoBehaviour:
   Tasks:
   - taskText: Finished!!
     taskState: 0
-    taskColour: {r: 0.0039215684, g: 0.9812633, b: 1, a: 0}
+    taskColour: {r: 0.0039215684, g: 0.84061193, b: 1, a: 0}
   - taskText: THIS IS A TASK TO DO!
     taskState: 1
     taskColour: {r: 1, g: 0.003921569, b: 0.078431375, a: 0}
-  - taskText: This is a new tasks
+  - taskText: This is a new task
     taskState: 1
     taskColour: {r: 1, g: 0.003921569, b: 0.078431375, a: 0}
   - taskText: A task that has begun

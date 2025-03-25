@@ -221,12 +221,16 @@ public class KanbanBoardEditorWindow : EditorWindow
     private void DebounceSaveAndRefresh(Action updateAction)
     {
         updateAction.Invoke();
+
+        // i think this is slowing the window refresh because it's saving and refreshing at the same time
         DebounceUtility.Debounce(() => { MarkDirtyAndSave(); RefreshWindow(); }, 0.5f);
     }
 
     private void RefreshWindow()
     {
         // Refresh the window to show the changes
+
+        // IS THERE A WAY TO REFRESH A NEW INSTANCE OF THE WINDOW WITHOUT DUPLICATING AND CLEARING THE ROOT VISUAL ELEMENT?
         rootVisualElement.Clear();
         GenerateWindowUI();
     }
