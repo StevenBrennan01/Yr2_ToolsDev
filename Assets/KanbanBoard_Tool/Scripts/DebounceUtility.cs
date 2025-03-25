@@ -17,7 +17,7 @@ public class DebounceUtility
 
         EditorApplication.update += Update;
     }
-
+    
     public static void Update()
     {
         if (Time.realtimeSinceStartup - _lastActionTime >= _debounceTime)

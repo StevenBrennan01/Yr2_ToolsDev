@@ -101,6 +101,7 @@ public class KanbanBoardEditorWindow : EditorWindow
         {
             kanbanData.column1Title = evt.newValue;
             MarkDirtyAndSave();
+            RefreshWindow();
         });
 
         column2Title.RegisterValueChangedCallback(evt =>
@@ -220,10 +221,7 @@ public class KanbanBoardEditorWindow : EditorWindow
     private void DebounceSaveAndRefresh(Action updateAction)
     {
         updateAction.Invoke();
-        DebounceUtility.Debounce(() => MarkDirtyAndSave(), 0.5f);
-
-        // Can this be done within the DebounceUtility?
-        RefreshWindow();
+        DebounceUtility.Debounce(() => { MarkDirtyAndSave(); RefreshWindow(); }, 0.5f);
     }
 
     private void RefreshWindow()
