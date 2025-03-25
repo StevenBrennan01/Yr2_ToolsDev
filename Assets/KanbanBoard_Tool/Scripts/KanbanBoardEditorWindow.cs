@@ -222,6 +222,7 @@ public class KanbanBoardEditorWindow : EditorWindow
         updateAction.Invoke();
         DebounceUtility.Debounce(() => MarkDirtyAndSave(), 0.5f);
 
+        // Can this be done within the DebounceUtility?
         RefreshWindow();
     }
 
