@@ -32,7 +32,7 @@ public class KanbanBoardEditorWindow : EditorWindow
         GenerateWindowUI();
     }
 
-    // Save the data when the window is closed
+    // Saves the data when the window is closed
     private void OnDisable()
     {
         MarkDirtyAndSave();
@@ -72,16 +72,14 @@ public class KanbanBoardEditorWindow : EditorWindow
 
     private void CreateNewTaskCard()
     {
-        // Make it so that tasks begin in the this column via a button press
         VisualElement newTaskBox = rootVisualElement.Q<VisualElement>("NewTaskBox");
 
         // Add/Delete task buttons
-
         Button addTaskButton = rootVisualElement.Q<Button>("AddTaskButton");
         Button deleteTaskButton = rootVisualElement.Q<Button>("DeleteTaskButton");
 
         // Column Types (currently: todo, in progress, to polish, finished) 
-        // Look into allowing the user to add more columns
+        // *Look into allowing the user to add more columns*
         VisualElement Column1 = rootVisualElement.Q<VisualElement>("Column1");
         VisualElement Column2 = rootVisualElement.Q<VisualElement>("Column2");
         VisualElement Column3 = rootVisualElement.Q<VisualElement>("Column3");
@@ -122,6 +120,7 @@ public class KanbanBoardEditorWindow : EditorWindow
         });
 
         // Deleting the last task in the BoardEditor
+        // *Maybe try and make it so that the user can delete a selected task in the future*
         deleteTaskButton.RegisterCallback<ClickEvent>(evt =>
         {
             Debug.Log("Deleting task card");
@@ -178,7 +177,7 @@ public class KanbanBoardEditorWindow : EditorWindow
                     continue;
                 }
 
-                // THIS IS POPULATING THE NEW TASK CARD WITH THE TASK DATA
+                // THIS IS POPULATING THE GENERATED NEW TASK CARD WITH THE TASK DATA
                 PopulateTaskCard(taskCard, task);
 
                 // MOVING THE TASK CARDS INTO THE CORRECT STATE COLUMNS
