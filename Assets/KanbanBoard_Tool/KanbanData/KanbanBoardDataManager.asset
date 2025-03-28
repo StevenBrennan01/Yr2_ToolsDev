@@ -13,9 +13,12 @@ MonoBehaviour:
   m_Name: KanbanBoardDataManager
   m_EditorClassIdentifier: 
   Tasks:
-  - taskText: awdawdawd
+  - taskText: to do
+    taskState: 1
+    taskColour: {r: 1, g: 0, b: 0, a: 0}
+  - taskText: new task
     taskState: 0
-    taskColour: {r: 0, g: 0, b: 0, a: 0}
+    taskColour: {r: 0, g: 1, b: 0.7800691, a: 0}
   column1Title: 'Tasks to Start: '
   column2Title: 'Tasks Begun:'
   column3Title: 'Tasks to Polish:'

@@ -181,7 +181,7 @@ public class KanbanBoardEditorWindow : EditorWindow
                 // THIS IS POPULATING THE NEW TASK CARD WITH THE TASK DATA
                 PopulateTaskCard(taskCard, task);
 
-                // Is this needed now tasks can be added via the UI?
+                // MOVING THE TASK CARDS INTO THE CORRECT STATE COLUMNS
                 switch (task.taskState)
                 {
                     case KanbanTaskState.ToDo:
