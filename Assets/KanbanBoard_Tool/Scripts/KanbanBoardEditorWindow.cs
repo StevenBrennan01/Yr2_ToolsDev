@@ -55,7 +55,7 @@ public class KanbanBoardEditorWindow : EditorWindow
         }
 
         // Importing in the StyleSheet
-        var styleSheet = AssetDatabase.LoadAssetAtPath<StyleSheet>("Assets/KanbanBoard_Tool/Window_UI/KanbanBoard.uss");
+        var styleSheet = AssetDatabase.LoadAssetAtPath<StyleSheet>("Assets/KanbanBoard_Tool/Window_UI/KanbanBoardStyling.uss");
         if (styleSheet != null)
         {
             rootVisualElement.styleSheets.Add(styleSheet);

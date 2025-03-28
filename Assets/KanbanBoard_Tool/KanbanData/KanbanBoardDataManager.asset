@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: KanbanBoardDataManager
   m_EditorClassIdentifier: 
   Tasks:
-  - taskText: to do
+  - taskText: This is a task i must do
     taskState: 1
     taskColour: {r: 1, g: 0, b: 0, a: 0}
   - taskText: new task
