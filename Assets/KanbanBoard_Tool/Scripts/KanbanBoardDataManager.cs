@@ -22,7 +22,7 @@ public class KanbanTask
 
 public enum KanbanTaskState
 {
-    NewTask,
+    BoardEditor,
     ToDo,
     InProgress,
     ToPolish,

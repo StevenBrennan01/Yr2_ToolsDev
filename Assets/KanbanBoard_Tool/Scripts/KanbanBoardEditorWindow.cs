@@ -72,21 +72,22 @@ public class KanbanBoardEditorWindow : EditorWindow
 
     private void CreateNewTaskCard()
     {
-        // Try make it so that tasks begin in the this column via a button press
+        // Make it so that tasks begin in the this column via a button press
         VisualElement newTaskBox = rootVisualElement.Q<VisualElement>("NewTaskBox");
 
-        // Buttons to add and delete tasks
+        // Add/Delete task buttons
+
         Button addTaskButton = rootVisualElement.Q<Button>("AddTaskButton");
         Button deleteTaskButton = rootVisualElement.Q<Button>("DeleteTaskButton");
 
-        // Column Types (todo, in progress, to polish, finished) 
+        // Column Types (currently: todo, in progress, to polish, finished) 
         // Look into allowing the user to add more columns
         VisualElement Column1 = rootVisualElement.Q<VisualElement>("Column1");
         VisualElement Column2 = rootVisualElement.Q<VisualElement>("Column2");
         VisualElement Column3 = rootVisualElement.Q<VisualElement>("Column3");
         VisualElement Column4 = rootVisualElement.Q<VisualElement>("Column4");
 
-        // Column Titles (Text Fields)
+        // Column Titles
         TextField column1Title = rootVisualElement.Q<TextField>("FirstColumnTitle");
         TextField column2Title = rootVisualElement.Q<TextField>("SecondColumnTitle");
         TextField column3Title = rootVisualElement.Q<TextField>("ThirdColumnTitle");
@@ -97,11 +98,46 @@ public class KanbanBoardEditorWindow : EditorWindow
         column3Title.value = kanbanData.column3Title;
         column4Title.value = kanbanData.column4Title;
 
+        // Adding new task into the BoardEditor
+        addTaskButton.RegisterCallback<ClickEvent>(evt =>
+        {
+            Debug.Log("Instantiating new task card");
+
+            // Add a new task to the new task box
+            KanbanTask newTask = new KanbanTask();
+            kanbanData.Tasks.Add(newTask);
+
+            // Instantiating a card for the new task
+            VisualElement taskCard = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>("Assets/KanbanBoard_Tool/Window_UI/TaskCard.uxml").Instantiate();
+
+            if (taskCard == null)
+            {
+                Debug.Log("Instantiating TaskCard failed");
+                return;
+            }
+
+            // THIS IS GENERATING A FRESH TASK CARD FOR THE NEW TASK
+            PopulateTaskCard(taskCard, newTask);
+            newTaskBox.Add(taskCard);
+        });
+
+        // Deleting the last task in the BoardEditor
+        deleteTaskButton.RegisterCallback<ClickEvent>(evt =>
+        {
+            Debug.Log("Deleting task card");
+
+            // Delete the last task in the new task box
+            if (kanbanData.Tasks.Count > 0)
+            {
+                kanbanData.Tasks.RemoveAt(kanbanData.Tasks.Count - 1);
+                newTaskBox.RemoveAt(newTaskBox.childCount - 1);
+            }
+        });
+
         column1Title.RegisterValueChangedCallback(evt =>
         {
             kanbanData.column1Title = evt.newValue;
             MarkDirtyAndSave();
-            RefreshWindow();
         });
 
         column2Title.RegisterValueChangedCallback(evt =>
@@ -142,8 +178,10 @@ public class KanbanBoardEditorWindow : EditorWindow
                     continue;
                 }
 
+                // THIS IS POPULATING THE NEW TASK CARD WITH THE TASK DATA
                 PopulateTaskCard(taskCard, task);
 
+                // Is this needed now tasks can be added via the UI?
                 switch (task.taskState)
                 {
                     case KanbanTaskState.ToDo:
@@ -158,7 +196,7 @@ public class KanbanBoardEditorWindow : EditorWindow
                     case KanbanTaskState.Finished:
                         Column4.Add(taskCard);
                         break;
-                    case KanbanTaskState.NewTask:
+                    case KanbanTaskState.BoardEditor:
                         newTaskBox.Add(taskCard);
                         break;
                 }
@@ -183,7 +221,7 @@ public class KanbanBoardEditorWindow : EditorWindow
         taskColour.value = task.taskColour;
 
         // Initialize the dropdown with this state as a default
-        stateDropdown.Init(KanbanTaskState.ToDo);
+        stateDropdown.Init(KanbanTaskState.BoardEditor);
         stateDropdown.value = task.taskState;
 
         // Register callbacks for updating the task data (task, state, colour)
