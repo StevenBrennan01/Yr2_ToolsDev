@@ -2,6 +2,7 @@ using System;
 using UnityEditor;
 using UnityEditor.UIElements;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.UIElements;
 
 public class KanbanBoardEditorWindow : EditorWindow
@@ -27,7 +28,7 @@ public class KanbanBoardEditorWindow : EditorWindow
             AssetDatabase.CreateAsset(kanbanData, dataAssetPath);
             Debug.Log("Created new KanbanBoardDataManager asset.");
         }
-
+        
         rootVisualElement.Clear();
         GenerateWindowUI();
     }
@@ -70,7 +71,7 @@ public class KanbanBoardEditorWindow : EditorWindow
         CreateNewTaskCard();
     }
 
-    private void CreateNewTaskCard()
+    private void CreateNewTaskCard() // refresh is refreshing every element even the ones that are not being edited, needs to be optimized
     {
         VisualElement newTaskBox = rootVisualElement.Q<VisualElement>("NewTaskBox");
 
@@ -101,7 +102,7 @@ public class KanbanBoardEditorWindow : EditorWindow
         {
             Debug.Log("Instantiating new task card");
 
-            // Add a new task to the new task box
+            // Add a new task to the new task box (board editor)
             KanbanTask newTask = new KanbanTask();
             kanbanData.Tasks.Add(newTask);
 
@@ -224,9 +225,9 @@ public class KanbanBoardEditorWindow : EditorWindow
         stateDropdown.value = task.taskState;
 
         // Register callbacks for updating the task data (task, state, colour)
-        taskText.RegisterValueChangedCallback(evt => DebounceSaveAndRefresh(() => task.taskText = evt.newValue));
-        stateDropdown.RegisterValueChangedCallback(evt => DebounceSaveAndRefresh(() => task.taskState = (KanbanTaskState)evt.newValue));
-        taskColour.RegisterValueChangedCallback(evt => DebounceSaveAndRefresh(() => task.taskColour = evt.newValue));
+        taskText.RegisterValueChangedCallback(evt => DebounceAndRefresh(() => task.taskText = evt.newValue));
+        stateDropdown.RegisterValueChangedCallback(evt => DebounceAndRefresh(() => task.taskState = (KanbanTaskState)evt.newValue));
+        taskColour.RegisterValueChangedCallback(evt => DebounceAndRefresh(() => task.taskColour = evt.newValue));
 
         // Register callbacks for drag and drop
         taskCard.RegisterCallback<PointerDownEvent>(evt => OnTaskPointerDown(evt, taskCard));
@@ -239,8 +240,10 @@ public class KanbanBoardEditorWindow : EditorWindow
 
     private void OnTaskPointerDown(PointerDownEvent evt, VisualElement taskCard)
     {
-        //implement logic for dragging the task card
+        // Implement logic for dragging the task card
         Debug.Log("Task card clicked");
+
+        // Set task card as drag object and call OntaskPointerMove when taskCard exists and mouse down
     }
 
     private void OnTaskPointerMove(PointerMoveEvent evt, VisualElement taskCard)
@@ -255,23 +258,21 @@ public class KanbanBoardEditorWindow : EditorWindow
         Debug.Log("Task card dropped");
     }
 
-    private void DebounceSaveAndRefresh(Action updateAction)
+    private void DebounceAndRefresh(Action updateAction)
     {
         updateAction.Invoke();
-
-        // i think this is slowing the window refresh because it's saving and refreshing at the same time
-        DebounceUtility.Debounce(() => { MarkDirtyAndSave(); RefreshWindow(); }, 0.5f);
+        DebounceUtility.Debounce(() => { RefreshWindow(); }, 1f);
     }
 
+    // Refresh the window to update the changes
     private void RefreshWindow()
     {
-        // Refresh the window to show the changes
-
-        // IS THERE A WAY TO REFRESH A NEW INSTANCE OF THE WINDOW WITHOUT DUPLICATING AND CLEARING THE ROOT VISUAL ELEMENT?
+        // This is causing some lag on window refresh
         rootVisualElement.Clear();
         GenerateWindowUI();
     }
 
+    // This method runs OnDisable so no need to save Labels as they are being edited
     private void MarkDirtyAndSave()
     {
         EditorUtility.SetDirty(kanbanData);

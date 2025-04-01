@@ -24,4 +24,5 @@
     border-right-width: 1px;
     border-bottom-width: 1px;
     border-left-width: 1px;
+    rotate: 0;
 }
