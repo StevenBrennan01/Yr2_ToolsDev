@@ -280,16 +280,16 @@ public class KanbanBoardEditorWindow : EditorWindow
         MarkDirtyAndSave();
     }
 
-    private void UpdateTaskCard(VisualElement taskCard, KanbanTask task)
-    {
-        //ColorField taskColorField = taskCard.Q<ColorField>("TaskColor");
-        //TextField taskText = taskCard.Q<TextField>("TaskText");
-        EnumField stateDropdown = taskCard.Q<EnumField>("TaskState");
+    //private void UpdateTaskCard(VisualElement taskCard, KanbanTask task)
+    //{
+    //    //ColorField taskColorField = taskCard.Q<ColorField>("TaskColor");
+    //    //TextField taskText = taskCard.Q<TextField>("TaskText");
+    //    EnumField stateDropdown = taskCard.Q<EnumField>("TaskState");
 
-        //taskColorField.value = task.taskColour;
-        //taskText.value = task.taskText;
-        stateDropdown.value = task.taskState;
-    }
+    //    //taskColorField.value = task.taskColour;
+    //    //taskText.value = task.taskText;
+    //    stateDropdown.value = task.taskState;
+    //}
 
     private void OnTaskPointerDown(PointerDownEvent evt, VisualElement taskCard)
     {
@@ -316,7 +316,8 @@ public class KanbanBoardEditorWindow : EditorWindow
         updateAction.Invoke();
         DebounceUtility.Debounce(() =>
         {
-            UpdateTaskCard(taskcard, task);
+            //UpdateTaskCard(taskcard, task);
+            MarkDirtyAndSave();
         }, .5f);
     }
 
