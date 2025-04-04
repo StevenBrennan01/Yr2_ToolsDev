@@ -2,7 +2,6 @@ using System;
 using UnityEditor;
 using UnityEditor.UIElements;
 using UnityEngine;
-using UnityEngine.EventSystems;
 using UnityEngine.UIElements;
 
 public class KanbanBoardEditorWindow : EditorWindow
@@ -29,7 +28,7 @@ public class KanbanBoardEditorWindow : EditorWindow
             Debug.Log("Created new KanbanBoardDataManager asset.");
         }
         
-        rootVisualElement.Clear();
+        //rootVisualElement.Clear();
         GenerateWindowUI();
     }
 
@@ -37,6 +36,12 @@ public class KanbanBoardEditorWindow : EditorWindow
     private void OnDisable()
     {
         MarkDirtyAndSave();
+    }
+
+    private void MarkDirtyAndSave()
+    {
+        EditorUtility.SetDirty(kanbanData);
+        AssetDatabase.SaveAssets();
     }
 
     private void GenerateWindowUI()
@@ -73,14 +78,13 @@ public class KanbanBoardEditorWindow : EditorWindow
 
     private void CreateNewTaskCard() // refresh is refreshing every element even the ones that are not being edited, needs to be optimized
     {
-        VisualElement newTaskBox = rootVisualElement.Q<VisualElement>("NewTaskBox");
-
         // Add/Delete task buttons
         Button addTaskButton = rootVisualElement.Q<Button>("AddTaskButton");
         Button deleteTaskButton = rootVisualElement.Q<Button>("DeleteTaskButton");
 
         // Column Types (currently: todo, in progress, to polish, finished) 
         // *Look into allowing the user to add more columns*
+        VisualElement newTaskBox = rootVisualElement.Q<VisualElement>("NewTaskBox");
         VisualElement Column1 = rootVisualElement.Q<VisualElement>("Column1");
         VisualElement Column2 = rootVisualElement.Q<VisualElement>("Column2");
         VisualElement Column3 = rootVisualElement.Q<VisualElement>("Column3");
@@ -97,9 +101,13 @@ public class KanbanBoardEditorWindow : EditorWindow
         column3Title.value = kanbanData.column3Title;
         column4Title.value = kanbanData.column4Title;
 
+        // Use this to only allow for one task card to be created at a time
+        int NewTaskCount = 0;
+
         // Adding new task into the BoardEditor
         addTaskButton.RegisterCallback<ClickEvent>(evt =>
         {
+
             Debug.Log("Instantiating new task card");
 
             // Add a new task to the new task box (board editor)
@@ -137,25 +145,21 @@ public class KanbanBoardEditorWindow : EditorWindow
         column1Title.RegisterValueChangedCallback(evt =>
         {
             kanbanData.column1Title = evt.newValue;
-            MarkDirtyAndSave();
         });
 
         column2Title.RegisterValueChangedCallback(evt =>
         {
             kanbanData.column2Title = evt.newValue;
-            MarkDirtyAndSave();
         });
 
         column3Title.RegisterValueChangedCallback(evt =>
         {
             kanbanData.column3Title = evt.newValue;
-            MarkDirtyAndSave();
         });
 
         column4Title.RegisterValueChangedCallback(evt =>
         {
             kanbanData.column4Title = evt.newValue;
-            MarkDirtyAndSave();
         });
 
         if (kanbanData.Tasks.Count == 0)
@@ -200,6 +204,7 @@ public class KanbanBoardEditorWindow : EditorWindow
                         newTaskBox.Add(taskCard);
                         break;
                 }
+                MarkDirtyAndSave();
             }
         }
         else
@@ -221,21 +226,75 @@ public class KanbanBoardEditorWindow : EditorWindow
         taskColour.value = task.taskColour;
 
         // Initialize the dropdown with this state as a default
-        stateDropdown.Init(KanbanTaskState.BoardEditor);
         stateDropdown.value = task.taskState;
+        stateDropdown.Init(KanbanTaskState.BoardEditor);
 
         // Register callbacks for updating the task data (task, state, colour)
-        taskText.RegisterValueChangedCallback(evt => DebounceAndRefresh(() => task.taskText = evt.newValue));
-        stateDropdown.RegisterValueChangedCallback(evt => DebounceAndRefresh(() => task.taskState = (KanbanTaskState)evt.newValue));
-        taskColour.RegisterValueChangedCallback(evt => DebounceAndRefresh(() => task.taskColour = evt.newValue));
+        taskText.RegisterValueChangedCallback(evt => DebounceAndRefresh(() => task.taskText = evt.newValue, taskCard, task));
+        taskColour.RegisterValueChangedCallback(evt => DebounceAndRefresh(() => task.taskColour = evt.newValue, taskCard, task));
+        stateDropdown.RegisterValueChangedCallback(evt =>
+        {
+            DebounceAndRefresh(() => task.taskState = (KanbanTaskState)evt.newValue, taskCard, task);
+            MoveTaskCard(taskCard, task);
+        });
 
         // Register callbacks for drag and drop
         taskCard.RegisterCallback<PointerDownEvent>(evt => OnTaskPointerDown(evt, taskCard));
         taskCard.RegisterCallback<PointerMoveEvent>(evt => OnTaskPointerMove(evt, taskCard));
         taskCard.RegisterCallback<PointerUpEvent>(evt => OnTaskPointerUp(evt, taskCard));
 
-        MarkDirtyAndSave();
         return taskCard;
+    }
+
+    private void MoveTaskCard(VisualElement taskCard, KanbanTask task)
+    {
+        //remove the task card from its current parent
+        //taskCard.RemoveFromHierarchy();
+
+        var currentParent = taskCard.parent;
+
+        if (currentParent != null)
+        {
+            currentParent.Remove(taskCard);
+        }
+        
+        // MOVING THE TASK CARDS INTO THE CORRECT STATE COLUMNS
+        VisualElement newParent = null;
+        switch (task.taskState)
+        {
+            case KanbanTaskState.ToDo:
+                newParent = rootVisualElement.Q<VisualElement>("Column1");
+                break;
+            case KanbanTaskState.InProgress:
+                newParent = rootVisualElement.Q<VisualElement>("Column2");
+                break;
+            case KanbanTaskState.ToPolish:
+                newParent = rootVisualElement.Q<VisualElement>("Column3");
+                break;
+            case KanbanTaskState.Finished:
+                newParent = rootVisualElement.Q<VisualElement>("Column4");
+                break;
+            case KanbanTaskState.BoardEditor:
+                newParent = rootVisualElement.Q<VisualElement>("NewTaskBox");
+                break;
+            default:
+                Debug.LogWarning("Invalid task state.");
+                break;
+        }
+        newParent.Add(taskCard);
+
+        MarkDirtyAndSave();
+    }
+
+    private void UpdateTaskCard(VisualElement taskCard, KanbanTask task)
+    {
+        ColorField taskColorField = taskCard.Q<ColorField>("TaskColor");
+        TextField taskText = taskCard.Q<TextField>("TaskText");
+        EnumField stateDropdown = taskCard.Q<EnumField>("TaskState");
+
+        taskColorField.value = task.taskColour;
+        taskText.value = task.taskText;
+        stateDropdown.value = task.taskState;
     }
 
     private void OnTaskPointerDown(PointerDownEvent evt, VisualElement taskCard)
@@ -258,24 +317,21 @@ public class KanbanBoardEditorWindow : EditorWindow
         Debug.Log("Task card dropped");
     }
 
-    private void DebounceAndRefresh(Action updateAction)
+    private void DebounceAndRefresh(Action updateAction, VisualElement taskcard, KanbanTask task)
     {
         updateAction.Invoke();
-        DebounceUtility.Debounce(() => { RefreshWindow(); }, 1f);
+        DebounceUtility.Debounce(() =>
+        {
+            UpdateTaskCard(taskcard, task);
+        }, .5f);
     }
 
     // Refresh the window to update the changes
     private void RefreshWindow()
     {
-        // This is causing some lag on window refresh
-        rootVisualElement.Clear();
-        GenerateWindowUI();
-    }
+        //rootVisualElement.Clear();
 
-    // This method runs OnDisable so no need to save Labels as they are being edited
-    private void MarkDirtyAndSave()
-    {
-        EditorUtility.SetDirty(kanbanData);
-        AssetDatabase.SaveAssets();
+        //This is trying to regenerate a new window for each key pressed(e.g. when 4 keys are pressed it tries to generate 4 new windows)
+        //GenerateWindowUI();
     }
 }
