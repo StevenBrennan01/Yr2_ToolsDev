@@ -249,16 +249,9 @@ public class KanbanBoardEditorWindow : EditorWindow
     private void MoveTaskCard(VisualElement taskCard, KanbanTask task)
     {
         //remove the task card from its current parent
-        //taskCard.RemoveFromHierarchy();
+        taskCard.RemoveFromHierarchy();
 
-        var currentParent = taskCard.parent;
-
-        if (currentParent != null)
-        {
-            currentParent.Remove(taskCard);
-        }
-        
-        // MOVING THE TASK CARDS INTO THE CORRECT STATE COLUMNS
+        // Relocating task cards on state change
         VisualElement newParent = null;
         switch (task.taskState)
         {
@@ -277,23 +270,24 @@ public class KanbanBoardEditorWindow : EditorWindow
             case KanbanTaskState.BoardEditor:
                 newParent = rootVisualElement.Q<VisualElement>("NewTaskBox");
                 break;
+
             default:
                 Debug.LogWarning("Invalid task state.");
                 break;
         }
-        newParent.Add(taskCard);
 
+        newParent.Add(taskCard);
         MarkDirtyAndSave();
     }
 
     private void UpdateTaskCard(VisualElement taskCard, KanbanTask task)
     {
-        ColorField taskColorField = taskCard.Q<ColorField>("TaskColor");
-        TextField taskText = taskCard.Q<TextField>("TaskText");
+        //ColorField taskColorField = taskCard.Q<ColorField>("TaskColor");
+        //TextField taskText = taskCard.Q<TextField>("TaskText");
         EnumField stateDropdown = taskCard.Q<EnumField>("TaskState");
 
-        taskColorField.value = task.taskColour;
-        taskText.value = task.taskText;
+        //taskColorField.value = task.taskColour;
+        //taskText.value = task.taskText;
         stateDropdown.value = task.taskState;
     }
 
