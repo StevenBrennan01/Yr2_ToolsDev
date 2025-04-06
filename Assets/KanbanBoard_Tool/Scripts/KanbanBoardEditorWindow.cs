@@ -1,4 +1,5 @@
 using System;
+using Unity.Burst.Intrinsics;
 using UnityEditor;
 using UnityEditor.UIElements;
 using UnityEngine;
@@ -73,10 +74,10 @@ public class KanbanBoardEditorWindow : EditorWindow
 
         #endregion
 
-        CreateNewTaskCard();
+        ReferenceUIElements();
     }
 
-    private void CreateNewTaskCard() // refresh is refreshing every element even the ones that are not being edited, needs to be optimized
+    private void ReferenceUIElements() // refresh is refreshing every element even the ones that are not being edited, needs to be optimized
     {
         // Add/Delete task buttons
         Button addTaskButton = rootVisualElement.Q<Button>("AddTaskButton");
@@ -85,6 +86,7 @@ public class KanbanBoardEditorWindow : EditorWindow
         // Column Types (currently: todo, in progress, to polish, finished) 
         // *Look into allowing the user to add more columns*
         VisualElement newTaskBox = rootVisualElement.Q<VisualElement>("NewTaskBox");
+
         VisualElement Column1 = rootVisualElement.Q<VisualElement>("Column1");
         VisualElement Column2 = rootVisualElement.Q<VisualElement>("Column2");
         VisualElement Column3 = rootVisualElement.Q<VisualElement>("Column3");
@@ -142,10 +144,24 @@ public class KanbanBoardEditorWindow : EditorWindow
             }
         });
 
-        column1Title.RegisterValueChangedCallback(evt =>
-        {
-            kanbanData.column1Title = evt.newValue;
-        });
+        // how the debouncer saves the taskcard
+        // DebounceAndSave(Action updateAction, VisualElement taskcard, KanbanTask task)
+
+        // This is the debouncer for the task text field
+        // taskText.RegisterValueChangedCallback(evt => DebounceAndRefresh(() => task.taskText = evt.newValue, taskCard, task)) ;
+
+        //Trying to debounce and save the column title changes like the task cards
+
+        column1Title.RegisterValueChangedCallback(evt => DebounceAndSave(() => kanbanData.column1Title = evt.newValue));
+
+        // Currently because all columns are their own seperate visual elements and not their own uxml file, they all need to be called and referenced like below.
+        // It might be ideal if I make a column uxml, instantiate them like the taskcards
+        // and then only reference them once in their own method so that they can also be debounced and saved much like the taskcards
+
+        //column1Title.RegisterValueChangedCallback(evt =>
+        //{
+        //    kanbanData.column1Title = evt.newValue;
+        //});
 
         column2Title.RegisterValueChangedCallback(evt =>
         {
@@ -230,11 +246,11 @@ public class KanbanBoardEditorWindow : EditorWindow
         stateDropdown.Init(KanbanTaskState.BoardEditor);
 
         // Register callbacks for updating the task data (task, state, colour)
-        taskText.RegisterValueChangedCallback(evt => DebounceAndRefresh(() => task.taskText = evt.newValue, taskCard, task));
-        taskColour.RegisterValueChangedCallback(evt => DebounceAndRefresh(() => task.taskColour = evt.newValue, taskCard, task));
+        taskText.RegisterValueChangedCallback(evt => DebounceAndSave(() => task.taskText = evt.newValue, taskCard, task)) ;
+        taskColour.RegisterValueChangedCallback(evt => DebounceAndSave(() => task.taskColour = evt.newValue, taskCard, task));
         stateDropdown.RegisterValueChangedCallback(evt =>
         {
-            DebounceAndRefresh(() => task.taskState = (KanbanTaskState)evt.newValue, taskCard, task);
+            DebounceAndSave(() => task.taskState = (KanbanTaskState)evt.newValue, taskCard, task);
             MoveTaskCard(taskCard, task);
         });
 
@@ -280,17 +296,6 @@ public class KanbanBoardEditorWindow : EditorWindow
         MarkDirtyAndSave();
     }
 
-    //private void UpdateTaskCard(VisualElement taskCard, KanbanTask task)
-    //{
-    //    //ColorField taskColorField = taskCard.Q<ColorField>("TaskColor");
-    //    //TextField taskText = taskCard.Q<TextField>("TaskText");
-    //    EnumField stateDropdown = taskCard.Q<EnumField>("TaskState");
-
-    //    //taskColorField.value = task.taskColour;
-    //    //taskText.value = task.taskText;
-    //    stateDropdown.value = task.taskState;
-    //}
-
     private void OnTaskPointerDown(PointerDownEvent evt, VisualElement taskCard)
     {
         // Implement logic for dragging the task card
@@ -311,22 +316,12 @@ public class KanbanBoardEditorWindow : EditorWindow
         Debug.Log("Task card dropped");
     }
 
-    private void DebounceAndRefresh(Action updateAction, VisualElement taskcard, KanbanTask task)
+    private void DebounceAndSave(Action updateAction, VisualElement taskcard, KanbanTask task)
     {
         updateAction.Invoke();
         DebounceUtility.Debounce(() =>
         {
-            //UpdateTaskCard(taskcard, task);
             MarkDirtyAndSave();
         }, .5f);
-    }
-
-    // Refresh the window to update the changes
-    private void RefreshWindow()
-    {
-        //rootVisualElement.Clear();
-
-        //This is trying to regenerate a new window for each key pressed(e.g. when 4 keys are pressed it tries to generate 4 new windows)
-        //GenerateWindowUI();
     }
 }

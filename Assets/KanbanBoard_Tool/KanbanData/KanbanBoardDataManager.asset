@@ -28,18 +28,15 @@ MonoBehaviour:
   - taskText: This one is being worked on
     taskState: 2
     taskColour: {r: 1, g: 0.5764706, b: 0, a: 0}
-  - taskText: Finished task!
-    taskState: 4
-    taskColour: {r: 0, g: 1, b: 0.050453424, a: 0}
-  - taskText: This one needs to be polished
+  - taskText: This one needs a polish
     taskState: 3
-    taskColour: {r: 1, g: 0.9735764, b: 0, a: 0}
-  - taskText: DONEEEE!
+    taskColour: {r: 1, g: 0.988338, b: 0, a: 0}
+  - taskText: This one is finished!!
     taskState: 4
     taskColour: {r: 0, g: 1, b: 0.050980397, a: 0}
-  - taskText: New task
+  - taskText: THIS SIS  ANEW  TASK
     taskState: 0
-    taskColour: {r: 0.9069853, g: 0, b: 1, a: 0}
+    taskColour: {r: 0, g: 1, b: 0.9194927, a: 0}
   column1Title: 'To Do:'
   column2Title: 'Tasks Begun:'
   column3Title: 'Tasks to Polish:'

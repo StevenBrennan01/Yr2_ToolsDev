@@ -3,24 +3,30 @@
 
 .boardHeaders {
     width: 0;
-    min-width: 140px;
+    min-width: 145px;
     -unity-font-style: bold;
-    -unity-text-align: upper-center;
+    -unity-text-align: upper-left;
     white-space: normal;
-    text-overflow: clip;
+    text-overflow: ellipsis;
     letter-spacing: 8px;
     word-spacing: 0;
     background-color: rgba(198, 198, 198, 0);
     -unity-background-image-tint-color: rgba(255, 255, 255, 0);
     -unity-text-outline-color: rgba(255, 255, 255, 0);
-    border-left-color: rgb(0, 255, 149);
-    border-right-color: rgb(0, 255, 149);
-    border-top-color: rgb(0, 255, 149);
-    border-bottom-color: rgb(0, 255, 149);
+    border-left-color: rgb(255, 81, 0);
+    border-right-color: rgb(255, 81, 0);
+    border-top-color: rgb(255, 81, 0);
+    border-bottom-color: rgb(255, 81, 0);
     border-top-width: 2px;
     border-right-width: 2px;
     border-bottom-width: 2px;
     border-left-width: 2px;
+    border-top-left-radius: 3px;
+    border-top-right-radius: 3px;
+    border-bottom-right-radius: 3px;
+    border-bottom-left-radius: 3px;
+    color: rgb(255, 255, 255);
+    font-size: 11px;
 }
 
 .taskBoard {

@@ -8,7 +8,6 @@ public class DebounceUtility
     private static float _debounceTime;
     private static float _lastActionTime;
 
-    // Debounce the action (Refresh UI) for the set time
     public static void Debounce(Action action, float debounceTime)
     {
         _debouncedAction = action;
