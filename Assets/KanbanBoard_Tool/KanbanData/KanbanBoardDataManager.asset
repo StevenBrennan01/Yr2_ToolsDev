@@ -13,6 +13,34 @@ MonoBehaviour:
   m_Name: KanbanBoardDataManager
   m_EditorClassIdentifier: 
   Tasks:
-  - taskTitle: 
-    taskDescription: 
-    state: 1
+  - taskText: This is a task i must do
+    taskState: 1
+    taskColour: {r: 1, g: 0, b: 0, a: 0}
+  - taskText: blah blah blahhh
+    taskState: 1
+    taskColour: {r: 1, g: 0, b: 0, a: 0}
+  - taskText: Task that has begun
+    taskState: 2
+    taskColour: {r: 1, g: 0.5764706, b: 0, a: 0}
+  - taskText: This one is in progress
+    taskState: 2
+    taskColour: {r: 1, g: 0.57633287, b: 0, a: 0}
+  - taskText: This one is being worked on
+    taskState: 2
+    taskColour: {r: 1, g: 0.5764706, b: 0, a: 0}
+  - taskText: Finished task!
+    taskState: 4
+    taskColour: {r: 0, g: 1, b: 0.050453424, a: 0}
+  - taskText: This one needs to be polished
+    taskState: 3
+    taskColour: {r: 1, g: 0.9735764, b: 0, a: 0}
+  - taskText: DONEEEE!
+    taskState: 4
+    taskColour: {r: 0, g: 1, b: 0.050980397, a: 0}
+  - taskText: New task
+    taskState: 0
+    taskColour: {r: 0.9069853, g: 0, b: 1, a: 0}
+  column1Title: 'To Do:'
+  column2Title: 'Tasks Begun:'
+  column3Title: 'Tasks to Polish:'
+  column4Title: 'Finished:'
