@@ -1,0 +1,22 @@
+.columnAttributes {
+    min-width: 130px;
+    min-height: 620px;
+    margin-right: 10px;
+}
+
+.columnTitle {
+    border-left-color: rgb(255, 67, 4);
+    border-right-color: rgb(255, 67, 4);
+    border-top-color: rgb(255, 67, 4);
+    border-bottom-color: rgb(255, 67, 4);
+    border-top-width: 2px;
+    border-right-width: 2px;
+    border-bottom-width: 2px;
+    border-left-width: 2px;
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+    border-bottom-right-radius: 5px;
+    border-bottom-left-radius: 5px;
+    min-width: 150px;
+    transform-origin: center 48%;
+}
