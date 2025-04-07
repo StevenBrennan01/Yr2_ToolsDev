@@ -12,8 +12,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4047943f4df3a3d46b24b4f9f962f982, type: 3}
   m_Name: KanbanBoardDataManager
   m_EditorClassIdentifier: 
-  Tasks: []
-  column1Title: 'To Do:'
-  column2Title: 'Tasks Begun:'
-  column3Title: 'Tasks to Polish:'
-  column4Title: 'Finished:'
+  Tasks:
+  - taskText: awwdadaw
+    taskState: 0
+    taskColour: {r: 0, g: 0, b: 0, a: 0}
+  - taskText: awdawdadaw
+    taskState: 0
+    taskColour: {r: 0, g: 0, b: 0, a: 0}
+  - taskText: 
+    taskState: 1
+    taskColour: {r: 0, g: 0, b: 0, a: 0}
+  ColumnTitles: []

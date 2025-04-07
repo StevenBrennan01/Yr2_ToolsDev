@@ -4,12 +4,11 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "KanbanBoardDataManager", menuName = "My Tools/Kanban Board Data Manager")]
 public class KanbanBoardDataManager : ScriptableObject
 {
+    // List to manage Tasks
     public List<KanbanTask> Tasks = new List<KanbanTask>();
 
-    [HideInInspector] public string column1Title;
-    [HideInInspector] public string column2Title;
-    [HideInInspector] public string column3Title;
-    [HideInInspector] public string column4Title;
+    // List to manage Column Titles
+    public List<string> ColumnTitles;
 }
 
 [System.Serializable]

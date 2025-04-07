@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using UnityEditor;
 using UnityEditor.UIElements;
 using UnityEngine;
@@ -7,6 +8,7 @@ using UnityEngine.UIElements;
 public class KanbanBoardEditorWindow : EditorWindow
 {
     private KanbanBoardDataManager kanbanData;
+    private List<VisualElement> taskColumns;
 
     [MenuItem("My Tools/Custom Kanban Board")]
     public static void OpenWindow()
@@ -28,7 +30,6 @@ public class KanbanBoardEditorWindow : EditorWindow
             Debug.Log("Created new KanbanBoardDataManager asset.");
         }
         
-        //rootVisualElement.Clear();
         GenerateWindowUI();
     }
 
@@ -78,37 +79,27 @@ public class KanbanBoardEditorWindow : EditorWindow
 
     private void ReferenceUIElements() // refresh is refreshing every element even the ones that are not being edited, needs to be optimized
     {
+        taskColumns = new List<VisualElement>();
+
+        for (int i = 0; i < 4; i++)
+        {
+            AddTaskColumn($"Edit Column Title:{i + 1}");
+        }
+
         // Add/Delete task buttons
         Button addTaskButton = rootVisualElement.Q<Button>("AddTaskButton");
         Button deleteTaskButton = rootVisualElement.Q<Button>("DeleteTaskButton");
 
         // Column Types (currently: todo, in progress, to polish, finished) 
         // *Look into allowing the user to add more columns*
-        VisualElement newTaskBox = rootVisualElement.Q<VisualElement>("NewTaskBox");
-
-        VisualElement Column1 = rootVisualElement.Q<VisualElement>("Column1");
-        VisualElement Column2 = rootVisualElement.Q<VisualElement>("Column2");
-        VisualElement Column3 = rootVisualElement.Q<VisualElement>("Column3");
-        VisualElement Column4 = rootVisualElement.Q<VisualElement>("Column4");
-
-        // Column Titles
-        TextField column1Title = rootVisualElement.Q<TextField>("FirstColumnTitle");
-        TextField column2Title = rootVisualElement.Q<TextField>("SecondColumnTitle");
-        TextField column3Title = rootVisualElement.Q<TextField>("ThirdColumnTitle");
-        TextField column4Title = rootVisualElement.Q<TextField>("FourthColumnTitle");
-
-        column1Title.value = kanbanData.column1Title;
-        column2Title.value = kanbanData.column2Title;
-        column3Title.value = kanbanData.column3Title;
-        column4Title.value = kanbanData.column4Title;
+        VisualElement boardEditorSlot = rootVisualElement.Q<VisualElement>("NewTaskBox");
 
         // Use this to only allow for one task card to be created at a time
         int NewTaskCount = 0;
 
-        // Adding new task into the BoardEditor
+        // Button for adding new task into the BoardEditor
         addTaskButton.RegisterCallback<ClickEvent>(evt =>
         {
-
             Debug.Log("Instantiating new task card");
 
             // Add a new task to the new task box (board editor)
@@ -126,10 +117,10 @@ public class KanbanBoardEditorWindow : EditorWindow
 
             // THIS IS GENERATING A FRESH TASK CARD FOR THE NEW TASK
             PopulateTaskCard(taskCard, newTask);
-            newTaskBox.Add(taskCard);
+            boardEditorSlot.Add(taskCard);
         });
 
-        // Deleting the last task in the BoardEditor
+        // Button for deleting the last task in the BoardEditor
         // *Maybe try and make it so that the user can delete a selected task in the future*
         deleteTaskButton.RegisterCallback<ClickEvent>(evt =>
         {
@@ -139,49 +130,28 @@ public class KanbanBoardEditorWindow : EditorWindow
             if (kanbanData.Tasks.Count > 0)
             {
                 kanbanData.Tasks.RemoveAt(kanbanData.Tasks.Count - 1);
-                newTaskBox.RemoveAt(newTaskBox.childCount - 1);
+                boardEditorSlot.RemoveAt(boardEditorSlot.childCount - 1);
             }
         });
+    }
 
-        // how the debouncer saves the taskcard
-        // DebounceAndSave(Action updateAction, VisualElement taskcard, KanbanTask task)
-
-        // This is the debouncer for the task text field
-        // taskText.RegisterValueChangedCallback(evt => DebounceAndRefresh(() => task.taskText = evt.newValue, taskCard, task)) ;
-
-        //Trying to debounce and save the column title changes like the task cards
-
-        //column1Title.RegisterValueChangedCallback(evt => DebounceAndSave(() => kanbanData.column1Title = evt.newValue));
-
-        // Currently because all columns are their own seperate visual elements and not their own uxml file, they all need to be called and referenced like below.
-        // It might be ideal if I make a column uxml, instantiate them like the taskcards
-        // and then only reference them once in their own method so that they can also be debounced and saved much like the taskcards
-
-        //column1Title.RegisterValueChangedCallback(evt =>
-        //{
-        //    kanbanData.column1Title = evt.newValue;
-        //});
-
-        column2Title.RegisterValueChangedCallback(evt =>
+    private void AddTaskColumn(string columnName)
+    {
+        VisualElement taskColumn = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>("Assets/KanbanBoard_Tool/Window_UI/TaskColumn.uxml").Instantiate();
+        if (taskColumn != null)
         {
-            kanbanData.column2Title = evt.newValue;
-        });
-
-        column3Title.RegisterValueChangedCallback(evt =>
-        {
-            kanbanData.column3Title = evt.newValue;
-        });
-
-        column4Title.RegisterValueChangedCallback(evt =>
-        {
-            kanbanData.column4Title = evt.newValue;
-        });
-
-        if (kanbanData.Tasks.Count == 0)
-        {
-            Debug.Log("No tasks found in the data manager.");
+            taskColumn.name = columnName;
+            rootVisualElement.Q<VisualElement>("ColumnContainer").Add(taskColumn);
+            taskColumns.Add(taskColumn);
         }
+        else
+        {
+            Debug.Log("TaskColumn.uxml not found, check it exists and also check for correct path");
+        }
+    }
 
+    private void AddTasks()
+    {
         var taskCardTemplate = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>("Assets/KanbanBoard_Tool/Window_UI/TaskCard.uxml");
         if (taskCardTemplate != null)
         {
@@ -199,26 +169,6 @@ public class KanbanBoardEditorWindow : EditorWindow
 
                 // THIS IS POPULATING THE GENERATED NEW TASK CARD WITH THE TASK DATA
                 PopulateTaskCard(taskCard, task);
-
-                // MOVING THE TASK CARDS INTO THE CORRECT STATE COLUMNS
-                switch (task.taskState)
-                {
-                    case KanbanTaskState.ToDo:
-                        Column1.Add(taskCard);
-                        break;
-                    case KanbanTaskState.InProgress:
-                        Column2.Add(taskCard);
-                        break;
-                    case KanbanTaskState.ToPolish:
-                        Column3.Add(taskCard);
-                        break;
-                    case KanbanTaskState.Finished:
-                        Column4.Add(taskCard);
-                        break;
-                    case KanbanTaskState.BoardEditor:
-                        newTaskBox.Add(taskCard);
-                        break;
-                }
                 MarkDirtyAndSave();
             }
         }
@@ -239,9 +189,7 @@ public class KanbanBoardEditorWindow : EditorWindow
         // Initializing the TaskText and Colour
         taskText.value = task.taskText;
         taskColour.value = task.taskColour;
-
-        // Initialize the dropdown with this state as a default
-        stateDropdown.value = task.taskState;
+        stateDropdown.value = task.taskState; // Initialize the dropdown with this state as a default
         stateDropdown.Init(KanbanTaskState.BoardEditor);
 
         // Register callbacks for updating the task data (task, state, colour)
