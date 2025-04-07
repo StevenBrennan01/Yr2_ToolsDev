@@ -1,5 +1,4 @@
 using System;
-using Unity.Burst.Intrinsics;
 using UnityEditor;
 using UnityEditor.UIElements;
 using UnityEngine;
@@ -152,7 +151,7 @@ public class KanbanBoardEditorWindow : EditorWindow
 
         //Trying to debounce and save the column title changes like the task cards
 
-        column1Title.RegisterValueChangedCallback(evt => DebounceAndSave(() => kanbanData.column1Title = evt.newValue));
+        //column1Title.RegisterValueChangedCallback(evt => DebounceAndSave(() => kanbanData.column1Title = evt.newValue));
 
         // Currently because all columns are their own seperate visual elements and not their own uxml file, they all need to be called and referenced like below.
         // It might be ideal if I make a column uxml, instantiate them like the taskcards

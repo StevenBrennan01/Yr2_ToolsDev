@@ -32,7 +32,7 @@
 .taskBoard {
     margin-right: 10px;
     max-width: none;
-    min-height: 620px;
+    min-height: 810px;
     min-width: 130px;
     background-color: rgba(0, 0, 0, 0);
 }
