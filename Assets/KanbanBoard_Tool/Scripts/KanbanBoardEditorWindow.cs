@@ -116,7 +116,7 @@ public class KanbanBoardEditorWindow : EditorWindow
             }
 
             // THIS IS GENERATING A FRESH TASK CARD FOR THE NEW TASK
-            PopulateTaskCard(taskCard, newTask);
+            PopulateTaskCards(taskCard, newTask);
             boardEditorSlot.Add(taskCard);
         });
 
@@ -150,7 +150,18 @@ public class KanbanBoardEditorWindow : EditorWindow
         }
     }
 
-    private void AddTasks()
+    // GOING TO NEED THIS WORKING FOR ALL COLUMNS NOT JUST [0]
+    private void PopulateTaskColumns()
+    {
+        TextField columnTitle = rootVisualElement.Q<TextField>("ColumnTitle");
+
+        columnTitle.value = kanbanData.ColumnTitles[0]; // Initialize the column title with the first column title
+
+        columnTitle.RegisterValueChangedCallback(evt => DebounceAndSaveColumnTitles(() => kanbanData.ColumnTitles[0] = evt.newValue, columnTitle));
+
+    }
+
+    private void AddTaskCards()
     {
         var taskCardTemplate = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>("Assets/KanbanBoard_Tool/Window_UI/TaskCard.uxml");
         if (taskCardTemplate != null)
@@ -168,7 +179,7 @@ public class KanbanBoardEditorWindow : EditorWindow
                 }
 
                 // THIS IS POPULATING THE GENERATED NEW TASK CARD WITH THE TASK DATA
-                PopulateTaskCard(taskCard, task);
+                PopulateTaskCards(taskCard, task);
                 MarkDirtyAndSave();
             }
         }
@@ -178,7 +189,7 @@ public class KanbanBoardEditorWindow : EditorWindow
         }
     }
 
-    private VisualElement PopulateTaskCard(VisualElement taskCard, KanbanTask task)
+    private VisualElement PopulateTaskCards(VisualElement taskCard, KanbanTask task)
     {
         // Loading individual cards into UXML depending on how many tasks exist
 
@@ -193,11 +204,11 @@ public class KanbanBoardEditorWindow : EditorWindow
         stateDropdown.Init(KanbanTaskState.BoardEditor);
 
         // Register callbacks for updating the task data (task, state, colour)
-        taskText.RegisterValueChangedCallback(evt => DebounceAndSave(() => task.taskText = evt.newValue, taskCard, task)) ;
-        taskColour.RegisterValueChangedCallback(evt => DebounceAndSave(() => task.taskColour = evt.newValue, taskCard, task));
+        taskText.RegisterValueChangedCallback(evt => DebounceAndSaveTaskCards(() => task.taskText = evt.newValue, taskCard, task)) ;
+        taskColour.RegisterValueChangedCallback(evt => DebounceAndSaveTaskCards(() => task.taskColour = evt.newValue, taskCard, task));
         stateDropdown.RegisterValueChangedCallback(evt =>
         {
-            DebounceAndSave(() => task.taskState = (KanbanTaskState)evt.newValue, taskCard, task);
+            DebounceAndSaveTaskCards(() => task.taskState = (KanbanTaskState)evt.newValue, taskCard, task);
             MoveTaskCard(taskCard, task);
         });
 
@@ -263,7 +274,16 @@ public class KanbanBoardEditorWindow : EditorWindow
         Debug.Log("Task card dropped");
     }
 
-    private void DebounceAndSave(Action updateAction, VisualElement taskcard, KanbanTask task)
+    private void DebounceAndSaveColumnTitles(Action updateAction, TextField columnTitle)
+    {
+        updateAction.Invoke();
+        DebounceUtility.Debounce(() =>
+        {
+            MarkDirtyAndSave();
+        }, .5f);
+    }
+
+    private void DebounceAndSaveTaskCards(Action updateAction, VisualElement taskcard, KanbanTask task)
     {
         updateAction.Invoke();
         DebounceUtility.Debounce(() =>
