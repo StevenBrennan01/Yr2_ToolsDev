@@ -90,6 +90,8 @@ public class KanbanBoardEditorWindow : EditorWindow
         Button addTaskButton = rootVisualElement.Q<Button>("AddTaskButton");
         Button deleteTaskButton = rootVisualElement.Q<Button>("DeleteTaskButton");
 
+        Slider AddExtraColumns = rootVisualElement.Q<Slider>("ColumnSlider");
+
         // Column Types (currently: todo, in progress, to polish, finished) 
         // *Look into allowing the user to add more columns*
         VisualElement boardEditorSlot = rootVisualElement.Q<VisualElement>("NewTaskBox");
@@ -195,8 +197,8 @@ public class KanbanBoardEditorWindow : EditorWindow
         // Initializing the TaskText and Colour
         taskText.value = task.taskText;
         taskColour.value = task.taskColour;
-        stateDropdown.value = task.taskState; // Initialize the dropdown with this state as a default
-        stateDropdown.Init(KanbanTaskState.BoardEditor);
+        stateDropdown.value = task.taskState;
+        //stateDropdown.Init(/*initialise in the board editor*/);
 
         // Register callbacks for updating the task data (task, state, colour)
         taskText.RegisterValueChangedCallback(evt => DebounceAndSaveTaskCards(() => task.taskText = evt.newValue, taskCard, task)) ;
@@ -204,7 +206,6 @@ public class KanbanBoardEditorWindow : EditorWindow
         stateDropdown.RegisterValueChangedCallback(evt =>
         {
             DebounceAndSaveTaskCards(() => task.taskState = (KanbanTaskState)evt.newValue, taskCard, task);
-            MoveTaskCard(taskCard, task);
         });
 
         // Register callbacks for drag and drop
@@ -215,52 +216,23 @@ public class KanbanBoardEditorWindow : EditorWindow
         return taskCard;
     }
 
-    private void MoveTaskCard(VisualElement taskCard, KanbanTask task)
-    {
-        //remove the task card from its current parent
-        taskCard.RemoveFromHierarchy();
-
-        // Relocating task cards on state change
-        VisualElement newParent = null;
-        switch (task.taskState)
-        {
-            case KanbanTaskState.ToDo:
-                newParent = rootVisualElement.Q<VisualElement>(kanbanData.ColumnTitles[0]);
-                break;
-            case KanbanTaskState.InProgress:
-                newParent = rootVisualElement.Q<VisualElement>(kanbanData.ColumnTitles[1]);
-                break;
-            case KanbanTaskState.ToPolish:
-                newParent = rootVisualElement.Q<VisualElement>(kanbanData.ColumnTitles[2]);
-                break;
-            case KanbanTaskState.Finished:
-                newParent = rootVisualElement.Q<VisualElement>(kanbanData.ColumnTitles[3]);
-                break;
-            case KanbanTaskState.BoardEditor:
-                newParent = rootVisualElement.Q<VisualElement>("NewTaskBox");
-                break;
-
-            default:
-                Debug.LogWarning("Invalid task state.");
-                break;
-        }
-
-        newParent.Add(taskCard);
-        MarkDirtyAndSave();
-    }
+    private VisualElement draggedTaskCard;
+    private Vector2 dragOffset;
 
     private void OnTaskPointerDown(PointerDownEvent evt, VisualElement taskCard)
     {
-        // Implement logic for dragging the task card
-        Debug.Log("Task card clicked");
-
-        // Set task card as drag object and call OntaskPointerMove when taskCard exists and mouse down
+        draggedTaskCard = taskCard;
+        dragOffset = evt.localPosition;
+        taskCard.CaptureMouse(); // Capture mouse events for the task card
     }
 
     private void OnTaskPointerMove(PointerMoveEvent evt, VisualElement taskCard)
     {
-        //implement logic for moving the task card
-        Debug.Log("Task card is moving");
+        if (draggedTaskCard != null && taskCard.HasMouseCapture()) // Check if taskcard is captured by mouse on TaskPointerDown
+        {
+            Vector2 newCardPosition = evt.localPosition - dragOffset;
+            taskCard.transform.position = newCardPosition;
+        }
     }
 
     private void OnTaskPointerUp(PointerUpEvent evt, VisualElement taskCard)

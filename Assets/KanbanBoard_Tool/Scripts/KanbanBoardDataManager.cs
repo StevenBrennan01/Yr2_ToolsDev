@@ -21,9 +21,9 @@ public class KanbanTask
 
 public enum KanbanTaskState
 {
-    BoardEditor,
-    ToDo,
-    InProgress,
-    ToPolish,
-    Finished
+    Working,
+    Bugged,
+    LowPriority,
+    MediumPriority,
+    HighPriority,
 }

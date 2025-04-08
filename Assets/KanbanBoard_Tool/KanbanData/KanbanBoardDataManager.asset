@@ -64,4 +64,31 @@ MonoBehaviour:
   - taskText: 
     taskState: 1
     taskColour: {r: 0, g: 0, b: 0, a: 0}
+  - taskText: 
+    taskState: 1
+    taskColour: {r: 0, g: 0, b: 0, a: 0}
+  - taskText: 
+    taskState: 0
+    taskColour: {r: 0, g: 0, b: 0, a: 0}
+  - taskText: 
+    taskState: 0
+    taskColour: {r: 0, g: 0, b: 0, a: 0}
+  - taskText: 
+    taskState: 2
+    taskColour: {r: 0, g: 0, b: 0, a: 0}
+  - taskText: 
+    taskState: 0
+    taskColour: {r: 0, g: 0, b: 0, a: 0}
+  - taskText: 
+    taskState: 0
+    taskColour: {r: 0, g: 0, b: 0, a: 0}
+  - taskText: 
+    taskState: 0
+    taskColour: {r: 0, g: 0, b: 0, a: 0}
+  - taskText: 
+    taskState: 0
+    taskColour: {r: 0, g: 0, b: 0, a: 0}
+  - taskText: 
+    taskState: 0
+    taskColour: {r: 0, g: 0, b: 0, a: 0}
   ColumnTitles: []
