@@ -30,7 +30,7 @@
 }
 
 .taskBoard {
-    margin-right: 10px;
+    margin-right: 12px;
     max-width: none;
     min-height: 810px;
     min-width: 130px;
@@ -44,4 +44,23 @@
     height: 25px;
     width: 165px;
     translate: 35px 0;
+}
+
+.button:hover {
+    scale: 1.1 1.1;
+    transition-duration: 0.2s;
+    transition-delay: 0s;
+    rotate: 0;
+    border-left-color: rgb(255, 255, 255);
+    border-right-color: rgb(255, 255, 255);
+    border-top-color: rgb(255, 255, 255);
+    border-bottom-color: rgb(255, 255, 255);
+    border-top-width: 1px;
+    border-right-width: 1px;
+    border-bottom-width: 1px;
+    border-left-width: 1px;
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+    border-bottom-right-radius: 5px;
+    border-bottom-left-radius: 5px;
 }

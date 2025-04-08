@@ -74,10 +74,10 @@ public class KanbanBoardEditorWindow : EditorWindow
 
         #endregion
 
-        ReferenceUIElements();
+        SetUpElements();
     }
 
-    private void ReferenceUIElements() // refresh is refreshing every element even the ones that are not being edited, needs to be optimized
+    private void SetUpElements() // refresh is refreshing every element even the ones that are not being edited, needs to be optimized
     {
         taskColumns = new List<VisualElement>();
 
@@ -100,8 +100,6 @@ public class KanbanBoardEditorWindow : EditorWindow
         // Button for adding new task into the BoardEditor
         addTaskButton.RegisterCallback<ClickEvent>(evt =>
         {
-            Debug.Log("Instantiating new task card");
-
             // Add a new task to the new task box (board editor)
             KanbanTask newTask = new KanbanTask();
             kanbanData.Tasks.Add(newTask);
@@ -124,8 +122,6 @@ public class KanbanBoardEditorWindow : EditorWindow
         // *Maybe try and make it so that the user can delete a selected task in the future*
         deleteTaskButton.RegisterCallback<ClickEvent>(evt =>
         {
-            Debug.Log("Deleting task card");
-
             // Delete the last task in the new task box
             if (kanbanData.Tasks.Count > 0)
             {
@@ -153,12 +149,11 @@ public class KanbanBoardEditorWindow : EditorWindow
     // GOING TO NEED THIS WORKING FOR ALL COLUMNS NOT JUST [0]
     private void PopulateTaskColumns()
     {
-        TextField columnTitle = rootVisualElement.Q<TextField>("ColumnTitle");
+        TextField columnTitle = rootVisualElement.Q<TextField>(/*CollumnName String*/);
 
         columnTitle.value = kanbanData.ColumnTitles[0]; // Initialize the column title with the first column title
 
         columnTitle.RegisterValueChangedCallback(evt => DebounceAndSaveColumnTitles(() => kanbanData.ColumnTitles[0] = evt.newValue, columnTitle));
-
     }
 
     private void AddTaskCards()
@@ -230,16 +225,16 @@ public class KanbanBoardEditorWindow : EditorWindow
         switch (task.taskState)
         {
             case KanbanTaskState.ToDo:
-                newParent = rootVisualElement.Q<VisualElement>("Column1");
+                newParent = rootVisualElement.Q<VisualElement>(kanbanData.ColumnTitles[0]);
                 break;
             case KanbanTaskState.InProgress:
-                newParent = rootVisualElement.Q<VisualElement>("Column2");
+                newParent = rootVisualElement.Q<VisualElement>(kanbanData.ColumnTitles[1]);
                 break;
             case KanbanTaskState.ToPolish:
-                newParent = rootVisualElement.Q<VisualElement>("Column3");
+                newParent = rootVisualElement.Q<VisualElement>(kanbanData.ColumnTitles[2]);
                 break;
             case KanbanTaskState.Finished:
-                newParent = rootVisualElement.Q<VisualElement>("Column4");
+                newParent = rootVisualElement.Q<VisualElement>(kanbanData.ColumnTitles[3]);
                 break;
             case KanbanTaskState.BoardEditor:
                 newParent = rootVisualElement.Q<VisualElement>("NewTaskBox");

@@ -1,18 +1,21 @@
 <engine:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:engine="UnityEngine.UIElements" xmlns:editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="True">
     <Style src="project://database/Assets/KanbanBoard_Tool/Window_UI/KanbanBoardStyling.uss?fileID=7433441132597879392&amp;guid=c3588b6f2082c144d9603d9b3dfe6c6a&amp;type=3#KanbanBoardStyling" />
     <engine:VisualElement name="KanbanContainer" style="flex-grow: 1; flex-direction: column; background-color: rgba(0, 0, 0, 0);">
-        <engine:VisualElement name="TitleContainer" style="flex-grow: 1; flex-direction: column; font-size: 35px; -unity-font-style: bold; padding-left: 0; padding-right: 0; padding-top: 0; padding-bottom: 0; margin-bottom: 0; margin-top: 15px; align-content: flex-start; justify-content: flex-start; align-items: center; height: 0; width: 280px; translate: 0 0;">
+        <engine:VisualElement name="TitleContainer" style="flex-grow: 1; flex-direction: column; font-size: 35px; -unity-font-style: bold; padding-left: 0; padding-right: 0; padding-top: 0; padding-bottom: 0; margin-bottom: 0; margin-top: 15px; align-content: flex-start; justify-content: flex-start; align-items: center; height: 52px; width: 280px; translate: 0 0; position: absolute;">
             <engine:Label text="Kanban Board" name="TitleLabel" class="header" style="height: 36px; color: rgb(255, 255, 255); -unity-text-align: middle-center; margin-top: 0; margin-right: 0; margin-bottom: 0; margin-left: 0; padding-top: 0; padding-right: 0; padding-bottom: 0; padding-left: 0;" />
         </engine:VisualElement>
         <engine:VisualElement name="ColumnContainer" style="flex-grow: 1; flex-direction: row; justify-content: flex-start; padding-top: 15px; padding-right: 15px; padding-bottom: 15px; padding-left: 15px; opacity: 1; translate: 270px 0; width: 1642px; height: 859px; align-items: flex-end; align-self: auto; position: absolute; top: 39px;" />
         <engine:VisualElement name="BoardEditor" style="flex-grow: 1; width: 241px; translate: 20px 160px; background-color: rgb(46, 46, 46); border-left-color: rgb(0, 0, 0); border-right-color: rgb(0, 0, 0); border-top-color: rgb(0, 0, 0); border-bottom-color: rgb(0, 0, 0); border-top-width: 2px; border-right-width: 2px; border-bottom-width: 2px; border-left-width: 2px; position: absolute; height: 384px;">
-            <engine:Label text="Board Editor" style="width: 123px; translate: 57px 0; -unity-font-style: bold; font-size: 20px; opacity: 1; -unity-text-align: upper-center;" />
-            <engine:VisualElement name="ButtonContainer" style="flex-grow: 1; max-height: 55px; height: 59px; translate: 0 190px; width: 237px; align-items: stretch;">
+            <engine:Label text="Board Editor" name="BoardEditorTitle" style="width: 123px; translate: 57px 0; -unity-font-style: bold; font-size: 20px; opacity: 1; -unity-text-align: upper-center;" />
+            <engine:Label text="Extra Task Columns" name="SliderText" style="-unity-text-align: upper-center; border-top-width: 1px; border-right-width: 1px; border-bottom-width: 1px; border-left-width: 1px; translate: 0 130px; -unity-font-style: bold;">
+                <engine:SliderInt value="-1" high-value="2" style="-unity-font-style: bold; translate: 0 15px;" />
+            </engine:Label>
+            <engine:VisualElement name="ButtonContainer" style="flex-grow: 1; max-height: 55px; height: 59px; translate: 0 160px; width: 237px; align-items: stretch;">
                 <engine:Button text="Add Task" name="AddTaskButton" class="button" />
                 <engine:Button text="Delete Task" name="DeleteTaskButton" class="button" />
             </engine:VisualElement>
-            <engine:Label text="(Drag Task or Change State)" style="position: absolute; translate: 52px 274px; width: 135px; font-size: 10px; -unity-text-align: upper-center;" />
-            <engine:VisualElement name="NewTaskBox" style="flex-grow: 1; translate: 0 215px; max-height: 90px; align-items: center; height: 85px;" />
+            <engine:Label text="(Drag Task or Change State)" name="TextUnderButtons" style="position: relative; translate: 52px 165px; width: 135px; font-size: 10px; -unity-text-align: upper-center;" />
+            <engine:VisualElement name="NewTaskBox" style="flex-grow: 1; translate: 0 175px; max-height: 90px; align-items: center; height: 85px;" />
         </engine:VisualElement>
     </engine:VisualElement>
 </engine:UXML>

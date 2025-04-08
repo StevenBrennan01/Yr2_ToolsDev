@@ -1,7 +1,7 @@
 .columnAttributes {
     min-width: 130px;
     min-height: 620px;
-    margin-right: 10px;
+    margin-right: 12px;
 }
 
 .columnTitle {
