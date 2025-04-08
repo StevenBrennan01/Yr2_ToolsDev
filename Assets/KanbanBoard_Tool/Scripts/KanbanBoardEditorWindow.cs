@@ -118,6 +118,8 @@ public class KanbanBoardEditorWindow : EditorWindow
             // THIS IS GENERATING A FRESH TASK CARD FOR THE NEW TASK
             PopulateTaskCards(taskCard, newTask);
             boardEditorSlot.Add(taskCard);
+
+            MarkDirtyAndSave();
         });
 
         // Button for deleting the last task in the BoardEditor
@@ -132,6 +134,8 @@ public class KanbanBoardEditorWindow : EditorWindow
                 kanbanData.Tasks.RemoveAt(kanbanData.Tasks.Count - 1);
                 boardEditorSlot.RemoveAt(boardEditorSlot.childCount - 1);
             }
+
+            MarkDirtyAndSave();
         });
     }
 
