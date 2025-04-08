@@ -230,15 +230,54 @@ public class KanbanBoardEditorWindow : EditorWindow
     {
         if (draggedTaskCard != null && taskCard.HasMouseCapture()) // Check if taskcard is captured by mouse on TaskPointerDown
         {
-            Vector2 newCardPosition = evt.localPosition - dragOffset;
+            Vector2 newCardPosition = (Vector2)evt.localPosition - dragOffset;
             taskCard.transform.position = newCardPosition;
         }
     }
 
     private void OnTaskPointerUp(PointerUpEvent evt, VisualElement taskCard)
     {
-        //implement logic for dropping the task card
-        Debug.Log("Task card dropped");
+        if (draggedTaskCard != null && taskCard.HasMouseCapture())
+        {
+            taskCard.ReleaseMouse();
+
+            VisualElement newParent = null;
+            foreach (var column in taskColumns)
+            {
+                if (column.worldBound.Contains(evt.position))
+                {
+                    newParent = column;
+                    break;
+                }
+            }
+
+            if (newParent != null)
+            {
+                newParent.Add(taskCard);
+
+                //int newStateIndex = taskColumns.IndexOf(newParent) + 1;
+                //taskState = (KanbanTaskState)newStateIndex;
+
+                MarkDirtyAndSave();
+            }
+
+            draggedTaskCard = null; // Reset the dragged task card
+        }
+    }
+
+    private void ApplyVisualOnState()
+    {
+        // Apply visual changes based on the task state
+
+        //switch (newState)
+        //{
+        //    case KanbanTaskState.Working:
+        //        taskCard.style.backgroundColor = new Color(0.5f, 0.5f, 1f); // Blue
+        //        break;
+        //    case KanbanTaskState.Bugged:
+        //        taskCard.style.backgroundColor = new Color(1f, 0.5f, 0.5f); // Red
+        //        break;
+        //}
     }
 
     private void DebounceAndSaveColumnTitles(Action updateAction, TextField columnTitle)
