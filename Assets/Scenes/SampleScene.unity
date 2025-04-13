@@ -486,8 +486,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 851368facca119143824709d0edffa4f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  EnemiesToSpawn: 7
-  EnemySeperationDistance: 2.79
+  EnemiesToSpawn: 9
+  EnemySeperationDistance: 1.92
 --- !u!4 &1215348553
 Transform:
   m_ObjectHideFlags: 0

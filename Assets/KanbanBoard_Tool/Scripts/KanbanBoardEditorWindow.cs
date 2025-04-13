@@ -201,7 +201,7 @@ public class KanbanBoardEditorWindow : EditorWindow
         //stateDropdown.Init(/*initialise in the board editor*/);
 
         // Register callbacks for updating the task data (task, state, colour)
-        taskText.RegisterValueChangedCallback(evt => DebounceAndSaveTaskCards(() => task.taskText = evt.newValue, taskCard, task)) ;
+        taskText.RegisterValueChangedCallback(evt => DebounceAndSaveTaskCards(() => task.taskText = evt.newValue, taskCard, task));
         taskColour.RegisterValueChangedCallback(evt => DebounceAndSaveTaskCards(() => task.taskColour = evt.newValue, taskCard, task));
         stateDropdown.RegisterValueChangedCallback(evt =>
         {
@@ -211,7 +211,7 @@ public class KanbanBoardEditorWindow : EditorWindow
         // Register callbacks for drag and drop
         taskCard.RegisterCallback<PointerDownEvent>(evt => OnTaskPointerDown(evt, taskCard));
         taskCard.RegisterCallback<PointerMoveEvent>(evt => OnTaskPointerMove(evt, taskCard));
-        taskCard.RegisterCallback<PointerUpEvent>(evt => OnTaskPointerUp(evt, taskCard));
+        taskCard.RegisterCallback<PointerUpEvent>(evt => OnTaskPointerRelease(evt, taskCard));
 
         return taskCard;
     }
@@ -228,14 +228,21 @@ public class KanbanBoardEditorWindow : EditorWindow
 
     private void OnTaskPointerMove(PointerMoveEvent evt, VisualElement taskCard)
     {
-        if (draggedTaskCard != null && taskCard.HasMouseCapture()) // Check if taskcard is captured by mouse on TaskPointerDown
+        if (draggedTaskCard != null && taskCard.HasMouseCapture()) // checking if taskcard is captured by mouse on TaskPointerDown
         {
-            Vector2 newCardPosition = (Vector2)evt.localPosition - dragOffset;
-            taskCard.transform.position = newCardPosition;
+            Vector2 newCardGlobalPosition = (Vector2)evt.position - dragOffset;
+
+            // converts the global position to the local position within the parent container 
+            // (has some properties that need to be converted to local for the parent element position (?))
+            Vector2 newCardLocalPosition = taskCard.parent.WorldToLocal(newCardGlobalPosition);
+
+            // Update the card's position (the -15 corrects the position of the card relative to the mouse a bit)
+            taskCard.style.left = newCardLocalPosition.x -15;
+            taskCard.style.top = newCardLocalPosition.y;
         }
     }
 
-    private void OnTaskPointerUp(PointerUpEvent evt, VisualElement taskCard)
+    private void OnTaskPointerRelease(PointerUpEvent evt, VisualElement taskCard)
     {
         if (draggedTaskCard != null && taskCard.HasMouseCapture())
         {
