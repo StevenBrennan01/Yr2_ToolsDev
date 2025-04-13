@@ -233,10 +233,10 @@ public class KanbanBoardEditorWindow : EditorWindow
             Vector2 newCardGlobalPosition = (Vector2)evt.position - dragOffset;
 
             // converts the global position to the local position within the parent container 
-            // (has some properties that need to be converted to local for the parent element position (?))
+            // takes the mouse pos relative to the entire window (above) and converts to local Element Pos
             Vector2 newCardLocalPosition = taskCard.parent.WorldToLocal(newCardGlobalPosition);
 
-            // Update the card's position (the -15 corrects the position of the card relative to the mouse a bit)
+            // Update card's position (the -15 corrects the position of the card relative to the mouse a bit)
             taskCard.style.left = newCardLocalPosition.x -15;
             taskCard.style.top = newCardLocalPosition.y;
         }
@@ -251,9 +251,10 @@ public class KanbanBoardEditorWindow : EditorWindow
             VisualElement newParent = null;
             foreach (var column in taskColumns)
             {
-                if (column.worldBound.Contains(evt.position))
+                var taskContainer = column.Q<VisualElement>("TaskBox");
+                if (taskContainer.worldBound.Contains(evt.position))
                 {
-                    newParent = column;
+                    newParent = taskContainer;
                     break;
                 }
             }
