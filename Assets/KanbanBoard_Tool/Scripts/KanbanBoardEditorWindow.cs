@@ -216,15 +216,22 @@ public class KanbanBoardEditorWindow : EditorWindow
         return taskCard;
     }
 
+    // Variables to handle dragging and dropping
     private VisualElement draggedTaskCard;
     private Vector2 dragOffset;
+
+    private VisualElement originalParent;
+    private Vector2 originalPosition;
+
+    private Coroutine resetTaskCard;
 
     private void OnTaskPointerDown(PointerDownEvent evt, VisualElement taskCard)
     {
         draggedTaskCard = taskCard;
         dragOffset = evt.localPosition;
 
-        rootVisualElement.Add(taskCard);
+        originalParent = taskCard.parent; // to reset to original parent
+        originalPosition = new Vector2(taskCard.resolvedStyle.left, taskCard.resolvedStyle.top); // to reset to original pos
 
         taskCard.CaptureMouse(); // Capture mouse events for the task card
     }
@@ -264,6 +271,14 @@ public class KanbanBoardEditorWindow : EditorWindow
                 }
             }
 
+            // Giving the option to drop the task card back in the new task box (board editor)
+            var boardEditor = rootVisualElement.Q<VisualElement>("BoardEditor");
+            var newTaskBox = rootVisualElement.Q<VisualElement>("NewTaskBox");
+            if (boardEditor.worldBound.Contains(evt.position))
+            {
+                newParent = newTaskBox;
+            }
+
             if (newParent != null)
             {
                 newParent.Add(taskCard);
@@ -276,10 +291,59 @@ public class KanbanBoardEditorWindow : EditorWindow
 
                 MarkDirtyAndSave();
             }
+            else
+            {
+                originalParent.Add(taskCard); // Reset to original parent if not dropped in a valid column
+                taskCard.style.left = originalPosition.x;
+                taskCard.style.top = originalPosition.y;
+
+                //AnimateBackToOriginalPosition(taskCard, originalParent, originalPosition);
+            }
 
             draggedTaskCard = null; // Reset the dragged task card
         }
     }
+
+    //private void AnimateBackToOriginalPosition(VisualElement taskCard, VisualElement originalParent, Vector2 originalPosition)
+    //{
+    //    // Step 1: Capture the global position before moving the task card
+    //    Rect globalBounds = taskCard.worldBound;
+    //    Vector2 globalStartPosition = new Vector2(globalBounds.xMin, globalBounds.yMin);
+
+    //    // Step 2: Re-add the task card to its original parent
+    //    originalParent.Add(taskCard);
+
+    //    // Step 3: Convert the global start position to the local position within the original parent
+    //    Vector2 localStartPosition = originalParent.WorldToLocal(globalStartPosition);
+
+    //    // Step 4: Start the animation
+    //    float duration = 0.3f; // Duration of the animation in seconds
+    //    float elapsedTime = 0f;
+
+    //    void UpdateAnimation()
+    //    {
+    //        elapsedTime += Time.deltaTime;
+    //        float t = Mathf.Clamp01(elapsedTime / duration); // Normalize time
+
+    //        // Smoothly interpolate the position
+    //        Vector2 newPosition = Vector2.Lerp(localStartPosition, originalPosition, t);
+    //        taskCard.style.left = newPosition.x;
+    //        taskCard.style.top = newPosition.y;
+
+    //        if (t >= 1f)
+    //        {
+    //            // Stop the animation when done
+    //            EditorApplication.update -= UpdateAnimation;
+
+    //            // Ensure exact final position
+    //            taskCard.style.left = originalPosition.x;
+    //            taskCard.style.top = originalPosition.y;
+    //        }
+    //    }
+
+    //    // Register the update callback
+    //    EditorApplication.update += UpdateAnimation;
+    //}
 
     private void ApplyVisualOnState()
     {
