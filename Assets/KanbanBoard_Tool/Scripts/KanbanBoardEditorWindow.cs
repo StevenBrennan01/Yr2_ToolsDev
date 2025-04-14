@@ -263,6 +263,9 @@ public class KanbanBoardEditorWindow : EditorWindow
             {
                 newParent.Add(taskCard);
 
+                taskCard.style.left = 0;
+                taskCard.style.top = 0;
+
                 //int newStateIndex = taskColumns.IndexOf(newParent) + 1;
                 //taskState = (KanbanTaskState)newStateIndex;
 
