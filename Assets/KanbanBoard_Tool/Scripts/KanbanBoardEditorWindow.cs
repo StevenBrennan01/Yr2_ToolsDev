@@ -223,6 +223,9 @@ public class KanbanBoardEditorWindow : EditorWindow
     {
         draggedTaskCard = taskCard;
         dragOffset = evt.localPosition;
+
+        rootVisualElement.Add(taskCard);
+
         taskCard.CaptureMouse(); // Capture mouse events for the task card
     }
 
@@ -235,6 +238,8 @@ public class KanbanBoardEditorWindow : EditorWindow
             // converts the global position to the local position within the parent container 
             // takes the mouse pos relative to the entire window (above) and converts to local Element Pos
             Vector2 newCardLocalPosition = taskCard.parent.WorldToLocal(newCardGlobalPosition);
+
+            rootVisualElement.Add(taskCard); // making the root element while dragging fixes card positioning issues
 
             // Update card's position (the -15 corrects the position of the card relative to the mouse a bit)
             taskCard.style.left = newCardLocalPosition.x -15;
