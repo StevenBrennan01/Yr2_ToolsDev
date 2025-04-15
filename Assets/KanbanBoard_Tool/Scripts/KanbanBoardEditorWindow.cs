@@ -83,7 +83,7 @@ public class KanbanBoardEditorWindow : EditorWindow
 
         for (int i = 0; i < 4; i++)
         {
-            AddTaskColumn($"Edit Column Title:{i + 1}");
+            InitColumns($"Edit Column Title:{i + 1}");
         }
 
         // Add/Delete task buttons
@@ -133,7 +133,7 @@ public class KanbanBoardEditorWindow : EditorWindow
         });
     }
 
-    private void AddTaskColumn(string columnName)
+    private void InitColumns(string columnName)
     {
         VisualElement taskColumn = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>("Assets/KanbanBoard_Tool/Window_UI/TaskColumn.uxml").Instantiate();
         if (taskColumn != null)
@@ -149,7 +149,7 @@ public class KanbanBoardEditorWindow : EditorWindow
     }
 
     // GOING TO NEED THIS WORKING FOR ALL COLUMNS NOT JUST [0]
-    private void PopulateTaskColumns()
+    private void LoadSavedColumnData()
     {
         TextField columnTitle = rootVisualElement.Q<TextField>(/*CollumnName String*/);
 
