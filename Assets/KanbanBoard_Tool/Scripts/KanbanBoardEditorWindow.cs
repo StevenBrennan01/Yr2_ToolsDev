@@ -74,10 +74,10 @@ public class KanbanBoardEditorWindow : EditorWindow
 
         #endregion
 
-        SetUpElements();
+        InitBaseUiElements();
     }
 
-    private void SetUpElements() // refresh is refreshing every element even the ones that are not being edited, needs to be optimized
+    private void InitBaseUiElements()
     {
         taskColumns = new List<VisualElement>();
 
@@ -116,7 +116,7 @@ public class KanbanBoardEditorWindow : EditorWindow
             }
 
             // THIS IS GENERATING A FRESH TASK CARD FOR THE NEW TASK
-            PopulateTaskCards(taskCard, newTask);
+            InitTaskCards(taskCard, newTask);
             boardEditorSlot.Add(taskCard);
         });
 
@@ -158,7 +158,8 @@ public class KanbanBoardEditorWindow : EditorWindow
         columnTitle.RegisterValueChangedCallback(evt => DebounceAndSaveColumnTitles(() => kanbanData.ColumnTitles[0] = evt.newValue, columnTitle));
     }
 
-    private void AddTaskCards()
+    private void LoadSavedTaskData()
+        // Checks for Tasks inside kanbanData.Tasks and delegates init to InitTaskCards
     {
         var taskCardTemplate = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>("Assets/KanbanBoard_Tool/Window_UI/TaskCard.uxml");
         if (taskCardTemplate != null)
@@ -175,8 +176,7 @@ public class KanbanBoardEditorWindow : EditorWindow
                     continue;
                 }
 
-                // THIS IS POPULATING THE GENERATED NEW TASK CARD WITH THE TASK DATA
-                PopulateTaskCards(taskCard, task);
+                InitTaskCards(taskCard, task);
                 MarkDirtyAndSave();
             }
         }
@@ -186,7 +186,7 @@ public class KanbanBoardEditorWindow : EditorWindow
         }
     }
 
-    private VisualElement PopulateTaskCards(VisualElement taskCard, KanbanTask task)
+    private VisualElement InitTaskCards(VisualElement taskCard, KanbanTask task)
     {
         // Loading individual cards into UXML depending on how many tasks exist
 
@@ -261,6 +261,7 @@ public class KanbanBoardEditorWindow : EditorWindow
             taskCard.ReleaseMouse();
 
             VisualElement newParent = null;
+            // Checking for task columns to drop the task card
             foreach (var column in taskColumns)
             {
                 var taskContainer = column.Q<VisualElement>("TaskBox");
@@ -271,7 +272,7 @@ public class KanbanBoardEditorWindow : EditorWindow
                 }
             }
 
-            // Giving the option to drop the task card back in the new task box (board editor)
+            // Checking for BoardEditor to put TaskCard back (to delete etc.)
             var boardEditor = rootVisualElement.Q<VisualElement>("BoardEditor");
             var newTaskBox = rootVisualElement.Q<VisualElement>("NewTaskBox");
             if (boardEditor.worldBound.Contains(evt.position))
