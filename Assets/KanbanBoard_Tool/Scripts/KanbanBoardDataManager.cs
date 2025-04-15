@@ -17,6 +17,7 @@ public class KanbanTask
     public string taskText;
     public KanbanTaskState taskState;
     public Color taskColour;
+    public int parentColumnIndex;
 }
 
 public enum KanbanTaskState
