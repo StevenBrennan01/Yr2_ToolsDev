@@ -131,6 +131,9 @@ public class KanbanBoardEditorWindow : EditorWindow
                 boardEditorSlot.RemoveAt(boardEditorSlot.childCount - 1);
             }
         });
+
+        LoadSavedColumnData();
+        LoadSavedTaskData();
     }
 
     private void LoadSavedColumnData()
@@ -191,7 +194,7 @@ public class KanbanBoardEditorWindow : EditorWindow
                 }
 
                 InitTaskCards(taskCard, task);
-                MarkDirtyAndSave();
+                //MarkDirtyAndSave();
             }
         }
         else
