@@ -133,6 +133,30 @@ public class KanbanBoardEditorWindow : EditorWindow
         });
     }
 
+    private void LoadSavedColumnData()
+    {
+        for (int i = 0; i < kanbanData.ColumnTitles.Count; i++)
+        {
+            if (i >= taskColumns.Count)
+            {
+                Debug.Log("Column not found, check the number of columns in the kanbanData");
+                continue;
+            }
+
+            VisualElement taskColumn = taskColumns[i];
+            TextField columnTitle = taskColumn.Q<TextField>("ColumnTitle");
+
+            columnTitle.value = kanbanData.ColumnTitles[i];
+
+            int columnIndex = i; // Capture the current index for the callback
+            columnTitle.RegisterValueChangedCallback(evt =>
+            {
+                kanbanData.ColumnTitles[columnIndex] = evt.newValue;
+                DebounceAndSaveColumnTitles(() => {MarkDirtyAndSave();}, columnTitle);
+            });
+        }
+    }
+
     private void InitColumns(string columnName)
     {
         VisualElement taskColumn = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>("Assets/KanbanBoard_Tool/Window_UI/TaskColumn.uxml").Instantiate();
@@ -146,16 +170,6 @@ public class KanbanBoardEditorWindow : EditorWindow
         {
             Debug.Log("TaskColumn.uxml not found, check it exists and also check for correct path");
         }
-    }
-
-    // GOING TO NEED THIS WORKING FOR ALL COLUMNS NOT JUST [0]
-    private void LoadSavedColumnData()
-    {
-        TextField columnTitle = rootVisualElement.Q<TextField>(/*CollumnName String*/);
-
-        columnTitle.value = kanbanData.ColumnTitles[0]; // Initialize the column title with the first column title
-
-        columnTitle.RegisterValueChangedCallback(evt => DebounceAndSaveColumnTitles(() => kanbanData.ColumnTitles[0] = evt.newValue, columnTitle));
     }
 
     private void LoadSavedTaskData()
