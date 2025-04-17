@@ -104,19 +104,15 @@ public class KanbanBoardEditorWindow : EditorWindow
 
         extraColumnSlider.RegisterValueChangedCallback(evt =>
         {
-            Debug.Log($"Slider value changed: {evt.newValue}");
-
             int sliderValue = (int)evt.newValue;
             int totalColumns = 4 + sliderValue;
-
-            Debug.Log($"Total columns should now be {totalColumns}");
 
             while (taskColumns.Count < totalColumns)
             {
                 int columnIndex = taskColumns.Count + 1;
-                LoadSavedColumnData($"New Column {columnIndex}");
-
-                Debug.Log("New Column added");
+                string newColumnTitle = $"New Column {columnIndex}";
+                LoadSavedColumnData(newColumnTitle);
+                kanbanData.ColumnTitles.Add(newColumnTitle); // Persist new column title
             }
 
             while (taskColumns.Count > totalColumns)
@@ -124,8 +120,6 @@ public class KanbanBoardEditorWindow : EditorWindow
                 VisualElement lastColumn = taskColumns[taskColumns.Count - 1];
                 columnContainer.Remove(lastColumn);
                 taskColumns.RemoveAt(taskColumns.Count - 1);
-
-                Debug.Log("Column removeddd!");
             }
 
             MarkDirtyAndSave();
@@ -187,6 +181,11 @@ public class KanbanBoardEditorWindow : EditorWindow
                 DebounceAndSaveColumnTitles(() => {MarkDirtyAndSave();}, columnTitle);
             });
         }
+
+        foreach (var columnTitle in kanbanData.ColumnTitles)
+        {
+            LoadSavedColumnData(columnTitle);
+        }
     }
 
     private void LoadSavedColumnData(string columnName)
@@ -223,6 +222,13 @@ public class KanbanBoardEditorWindow : EditorWindow
                 }
 
                 InitTaskCards(taskCard, task);
+
+                // Assign task card to its parent column
+                if (task.parentColumnIndex >= 0 && task.parentColumnIndex < taskColumns.Count)
+                {
+                    var parentColumn = taskColumns[task.parentColumnIndex].Q<VisualElement>("TaskBox");
+                    parentColumn.Add(taskCard);
+                }
             }
         }
         else
@@ -301,24 +307,19 @@ public class KanbanBoardEditorWindow : EditorWindow
             taskCard.ReleaseMouse();
 
             VisualElement newParent = null;
-            //VisualElement newParent = taskColumns.FirstOrDefault(column => column.worldBound.Contains(evt.position));
-            // Checking for task columns to drop the task card
-            foreach (var column in taskColumns) // Setting the new TaskCard parent
+            int newParentIndex = -1;
+
+            // Find the column the task card was dropped into
+            for (int i = 0; i < taskColumns.Count; i++)
             {
+                var column = taskColumns[i];
                 var taskContainer = column.Q<VisualElement>("TaskBox");
                 if (taskContainer.worldBound.Contains(evt.position))
                 {
                     newParent = taskContainer;
+                    newParentIndex = i;
                     break;
                 }
-            }
-
-            // Checking for BoardEditor to put TaskCard back (to delete etc.)
-            var boardEditor = rootVisualElement.Q<VisualElement>("BoardEditor");
-            var newTaskBox = rootVisualElement.Q<VisualElement>("NewTaskBox");
-            if (boardEditor.worldBound.Contains(evt.position))
-            {
-                newParent = newTaskBox;
             }
 
             if (newParent != null) // Tweaking the TaskCards pos in newParent
@@ -338,6 +339,14 @@ public class KanbanBoardEditorWindow : EditorWindow
                 originalParent.Add(taskCard);
                 taskCard.style.left = originalPosition.x;
                 taskCard.style.top = originalPosition.y;
+            }
+
+            // Checking for BoardEditor to put TaskCard back (to delete etc.)
+            var boardEditor = rootVisualElement.Q<VisualElement>("BoardEditor");
+            var newTaskBox = rootVisualElement.Q<VisualElement>("NewTaskBox");
+            if (boardEditor.worldBound.Contains(evt.position))
+            {
+                newParent = newTaskBox;
             }
 
             draggedTaskCard = null; // Reset the dragged task card

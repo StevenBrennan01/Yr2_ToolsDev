@@ -16,29 +16,8 @@ MonoBehaviour:
   - taskText: 
     taskState: 0
     taskColour: {r: 0, g: 0, b: 0, a: 0}
-    parentColumnIndex: 1
-  - taskText: 
-    taskState: 0
-    taskColour: {r: 0, g: 0, b: 0, a: 0}
     parentColumnIndex: 0
-  - taskText: 
-    taskState: 0
-    taskColour: {r: 0, g: 0, b: 0, a: 0}
-    parentColumnIndex: 0
-  - taskText: 
-    taskState: 0
-    taskColour: {r: 0, g: 0, b: 0, a: 0}
-    parentColumnIndex: 0
-  - taskText: 
-    taskState: 0
-    taskColour: {r: 0, g: 0, b: 0, a: 0}
-    parentColumnIndex: 0
-  - taskText: 
-    taskState: 0
-    taskColour: {r: 0, g: 0, b: 0, a: 0}
-    parentColumnIndex: 0
-  - taskText: 
-    taskState: 0
-    taskColour: {r: 0, g: 0, b: 0, a: 0}
-    parentColumnIndex: 0
-  ColumnTitles: []
+  ColumnTitles:
+  - New Column 5
+  - New Column 6
+  - New Column 7
