@@ -12,12 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4047943f4df3a3d46b24b4f9f962f982, type: 3}
   m_Name: KanbanBoardDataManager
   m_EditorClassIdentifier: 
-  Tasks:
-  - taskText: 
-    taskState: 0
-    taskColour: {r: 0, g: 0, b: 0, a: 0}
-    parentColumnIndex: 0
+  Tasks: []
   ColumnTitles:
-  - New Column 5
-  - New Column 6
-  - New Column 7
+  - 'Edit Column Title: '
+  - 'Edit Column Title: '
+  - 'Edit Column Title: '

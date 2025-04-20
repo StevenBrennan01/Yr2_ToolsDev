@@ -5,19 +5,28 @@ using UnityEngine;
 public class KanbanBoardDataManager : ScriptableObject
 {
     // List to manage Tasks
-    public List<KanbanTask> Tasks = new List<KanbanTask>();
+    public List<TaskData> Tasks = new List<TaskData>();
 
     // List to manage Column Titles
     public List<string> ColumnTitles;
+
+    public List<ColumnData> Columns = new List<ColumnData>();
 }
 
 [System.Serializable]
-public class KanbanTask
+public class TaskData
 {
     public string taskText;
     public KanbanTaskState taskState;
     public Color taskColour;
     public int parentColumnIndex;
+}
+
+[System.Serializable]
+public class ColumnData
+{
+    public string columnTitle;
+    public List<TaskData> tasks = new List<TaskData>();
 }
 
 public enum KanbanTaskState
