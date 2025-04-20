@@ -18,7 +18,11 @@ MonoBehaviour:
   - columnTitle: 'Edit Column Title: 2'
     tasks: []
   - columnTitle: 'Edit Column Title: 3'
-    tasks: []
+    tasks:
+    - taskText: New Task
+      taskColour: {r: 1, g: 1, b: 1, a: 1}
+      taskState: 1
+      parentColumnIndex: 2
   - columnTitle: 'Edit Column Title: 4'
     tasks: []
   sliderValue: 0
