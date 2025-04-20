@@ -26,19 +26,17 @@ public class KanbanBoardEditorWindow : EditorWindow
         {
             kanbanData = CreateInstance<KanbanBoardDataManager>();
             AssetDatabase.CreateAsset(kanbanData, dataAssetPath);
-            Debug.Log("Created new KanbanBoardDataManager asset.");
         }
 
-        // Ensure the ScriptableObject has at least 4 initial columns
-        if (kanbanData.Columns.Count == 0)
+        int initialColumnCount = 4; // Initial number of columns
+
+        while (kanbanData.Columns.Count < initialColumnCount)
         {
-            for (int i = 0; i < 4; i++)
-            {
-                kanbanData.Columns.Add(new ColumnData { columnTitle = $"Edit Column Title: {i + 1}" });
-            }
-            kanbanData.sliderValue = 0; // Set the initial slider value
-            MarkDirtyAndSave();
+            int columnIndex = kanbanData.Columns.Count;
+            kanbanData.Columns.Add(new ColumnData { columnTitle = $"Edit Column Title: {columnIndex + 1}" });
         }
+        // kanbanData.sliderValue = 0; // Set the initial slider value
+        MarkDirtyAndSave();
 
         GenerateWindowUI();
 
@@ -108,19 +106,19 @@ public class KanbanBoardEditorWindow : EditorWindow
 
     private void InitBaseUiElements()
     {
-        int initialColumnCount = 4; // Initial number of columns
+        //int initialColumnCount = 4; // Initial number of columns
 
-        while (kanbanData.Columns.Count < initialColumnCount)
-        {
-            kanbanData.Columns.Add(new ColumnData { columnTitle = $"Edit Column Title: {initialColumnCount + 1}" });
-        }
-        MarkDirtyAndSave();
+        //while (kanbanData.Columns.Count < initialColumnCount)
+        //{
+        //    kanbanData.Columns.Add(new ColumnData { columnTitle = $"Edit Column Title: {initialColumnCount + 1}" });
+        //}
+        //MarkDirtyAndSave();
 
-        // Remove excess columns if they exist
-        while (kanbanData.Columns.Count > initialColumnCount)
-        {
-            kanbanData.Columns.RemoveAt(kanbanData.Columns.Count - 1);
-        }
+        //// Remove excess columns if they exist
+        //while (kanbanData.Columns.Count > initialColumnCount)
+        //{
+        //    kanbanData.Columns.RemoveAt(kanbanData.Columns.Count - 1);
+        //}
 
         foreach (var columnData in kanbanData.Columns)
         {
@@ -156,11 +154,12 @@ public class KanbanBoardEditorWindow : EditorWindow
 
             while (kanbanData.Columns.Count > totalColumns)
             {
+                if (kanbanData.Columns.Count <= 4) break; // Prevent removing the initial columns
+
                 kanbanData.Columns.RemoveAt(kanbanData.Columns.Count - 1);
 
                 var lastColumn = rootVisualElement.Q<VisualElement>("ColumnContainer").Children().Last();
-                //columnContainer.Remove(lastColumn);
-                lastColumn?.RemoveFromHierarchy();
+                columnContainer.Remove(lastColumn);
             }
 
             MarkDirtyAndSave();

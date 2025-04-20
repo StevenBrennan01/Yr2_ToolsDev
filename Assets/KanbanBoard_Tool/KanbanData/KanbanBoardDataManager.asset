@@ -21,8 +21,4 @@ MonoBehaviour:
     tasks: []
   - columnTitle: 'Edit Column Title: 4'
     tasks: []
-  - columnTitle: 'Edit Column Title: 5'
-    tasks: []
-  - columnTitle: 'Edit Column Title: 6'
-    tasks: []
-  sliderValue: 2
+  sliderValue: 0
