@@ -159,7 +159,7 @@ public class KanbanBoardEditorWindow : EditorWindow
 
                 kanbanData.Columns.RemoveAt(kanbanData.Columns.Count - 1);
 
-                var lastColumn = rootVisualElement.Q<VisualElement>("ColumnContainer").Children().Last();
+                VisualElement lastColumn = rootVisualElement.Q<VisualElement>("ColumnContainer").Children().Last();
                 columnContainer.Remove(lastColumn);
 
             }
@@ -170,14 +170,12 @@ public class KanbanBoardEditorWindow : EditorWindow
         // Button for adding new task into the BoardEditor
         addTaskButton.RegisterCallback<ClickEvent>(evt =>
         {
-            //VisualElement boardEditorSlot = rootVisualElement.Q<VisualElement>("NewTaskBox");
-
             int targetColumnIndex = 0;
             var targetColumn = kanbanData.Columns[targetColumnIndex];
 
             TaskData newTask = new TaskData
             {
-                taskText = "New Task",
+                taskText = "Input New Task:",
                 taskColour = Color.white,
                 taskState = KanbanTaskState.Bugged,
                 parentColumnIndex = targetColumnIndex
@@ -185,16 +183,16 @@ public class KanbanBoardEditorWindow : EditorWindow
 
             targetColumn.tasks.Add(newTask);
 
-            var taskCardTemplate = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>("Assets/KanbanBoard_Tool/Window_UI/TaskCard.uxml");
-            VisualElement taskCard = taskCardTemplate.Instantiate();
+            VisualElement taskCardTemplate = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>("Assets/KanbanBoard_Tool/Window_UI/TaskCard.uxml").Instantiate();
+            LoadSavedTaskData(newTask, taskCardTemplate);
+            VisualElement newTaskBox = rootVisualElement.Q<VisualElement>("NewTaskBox");
 
-            //LoadSavedTaskData(newTask, taskCard);
+            //var taskBox = rootVisualElement.Q<VisualElement>("ColumnContainer")
+            //                   .Children()
+            //                   .ElementAt(targetColumnIndex) // Get the column by index
+            //                   .Q<VisualElement>("TaskBox");
 
-            var taskBox = rootVisualElement.Q<VisualElement>("NewTaskBox");
-            taskBox.Add(taskCard);
-
-            LoadSavedTaskData(newTask, taskCard);
-
+            newTaskBox.Add(taskCardTemplate);
             MarkDirtyAndSave();
 
 
@@ -276,10 +274,10 @@ public class KanbanBoardEditorWindow : EditorWindow
 
         foreach (var child in columnContainer.Children())
         {
-            var existingTitleField = child.Q<TextField>("ColumnTitle");
+            TextField existingTitleField = child.Q<TextField>("ColumnTitle");
             if (existingTitleField != null && existingTitleField.value == columnData.columnTitle)
             {
-                Debug.LogWarning($"Column with title '{columnData.columnTitle}' already exists in the UI.");
+                //Debug.LogWarning($"Column with title '{columnData.columnTitle}' already exists in the UI.");
                 return; // Prevent duplicate instantiation
             }
         }
@@ -287,11 +285,12 @@ public class KanbanBoardEditorWindow : EditorWindow
         var taskColumnTemplate = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>("Assets/KanbanBoard_Tool/Window_UI/TaskColumn.uxml");
         var taskColumnElement = taskColumnTemplate.Instantiate();
 
-        var titleField = taskColumnElement.Q<TextField>("ColumnTitle");
+        TextField titleField = taskColumnElement.Q<TextField>("ColumnTitle");
         titleField.value = columnData.columnTitle;
         titleField.RegisterValueChangedCallback(evt => DebounceAndSaveColumnTitles(() => columnData.columnTitle = evt.newValue, titleField));
 
-        var taskBox = taskColumnElement.Q<VisualElement>("TaskBox");
+        // Now checks for tasks that should be within these columns
+        VisualElement taskBox = taskColumnElement.Q<VisualElement>("TaskBox");
         foreach (var task in columnData.tasks)
         {
             var taskCard = LoadSavedTaskData(task, taskBox);
@@ -343,25 +342,25 @@ public class KanbanBoardEditorWindow : EditorWindow
 
         taskCard.userData = taskData;
 
-        TextField taskText = taskCard.Q<TextField>("TaskText");
-        EnumField stateDropdown = taskCard.Q<EnumField>("TaskState");
-        ColorField taskColour = taskCard.Q<ColorField>("TaskColor");
+        TextField taskText = taskContainer.Q<TextField>("TaskText");
+        EnumField stateDropdown = taskContainer.Q<EnumField>("TaskState");
+        ColorField taskColour = taskContainer.Q<ColorField>("TaskColor");
 
         // Initializing the TaskText Colour and State
         taskText.value = taskData.taskText;
-        taskColour.value = taskData.taskColour;
         stateDropdown.value = taskData.taskState;
+        taskColour.value = taskData.taskColour;
         //stateDropdown.Init(/*initialise in the board editor*/);
 
         // Register callbacks for updating the task data (task, state, colour)
-        taskText.RegisterValueChangedCallback(evt => DebounceAndSaveTaskCards(() => taskData.taskText = evt.newValue, taskCard, taskData));
-        taskColour.RegisterValueChangedCallback(evt => DebounceAndSaveTaskCards(() => taskData.taskColour = evt.newValue, taskCard, taskData));
-        stateDropdown.RegisterValueChangedCallback(evt => DebounceAndSaveTaskCards(() => taskData.taskState = (KanbanTaskState)evt.newValue, taskCard, taskData));
+        taskText.RegisterValueChangedCallback(evt => DebounceAndSaveTaskCards(() => taskData.taskText = evt.newValue, taskContainer, taskData));
+        taskColour.RegisterValueChangedCallback(evt => DebounceAndSaveTaskCards(() => taskData.taskColour = evt.newValue, taskContainer, taskData));
+        stateDropdown.RegisterValueChangedCallback(evt => DebounceAndSaveTaskCards(() => taskData.taskState = (KanbanTaskState)evt.newValue, taskContainer, taskData));
 
         // Register callbacks for drag and drop
-        taskCard.RegisterCallback<PointerDownEvent>(evt => OnTaskPointerDown(evt, taskCard));
-        taskCard.RegisterCallback<PointerMoveEvent>(evt => OnTaskPointerMove(evt, taskCard));
-        taskCard.RegisterCallback<PointerUpEvent>(evt => OnTaskPointerRelease(evt, taskCard));
+        taskCard.RegisterCallback<PointerDownEvent>(evt => OnTaskPointerDown(evt, taskContainer));
+        taskCard.RegisterCallback<PointerMoveEvent>(evt => OnTaskPointerMove(evt, taskContainer));
+        taskCard.RegisterCallback<PointerUpEvent>(evt => OnTaskPointerRelease(evt, taskContainer));
 
         return taskCard;
     }
