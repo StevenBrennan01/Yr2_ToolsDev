@@ -322,6 +322,16 @@ public class KanbanBoardEditorWindow : EditorWindow
                 }
             }
 
+            // Checking for BoardEditor to put TaskCard back (to delete etc.)
+            var boardEditor = rootVisualElement.Q<VisualElement>("BoardEditor");
+            var newTaskBox = rootVisualElement.Q<VisualElement>("NewTaskBox");
+            if (boardEditor.worldBound.Contains(evt.position))
+            {
+                newParent = newTaskBox;
+            }
+
+            draggedTaskCard = null; // Reset the dragged task card
+
             if (newParent != null) // Tweaking the TaskCards pos in newParent
             {
                 newParent.Add(taskCard);
@@ -340,16 +350,6 @@ public class KanbanBoardEditorWindow : EditorWindow
                 taskCard.style.left = originalPosition.x;
                 taskCard.style.top = originalPosition.y;
             }
-
-            // Checking for BoardEditor to put TaskCard back (to delete etc.)
-            var boardEditor = rootVisualElement.Q<VisualElement>("BoardEditor");
-            var newTaskBox = rootVisualElement.Q<VisualElement>("NewTaskBox");
-            if (boardEditor.worldBound.Contains(evt.position))
-            {
-                newParent = newTaskBox;
-            }
-
-            draggedTaskCard = null; // Reset the dragged task card
         }
     }
 
