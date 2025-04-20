@@ -14,15 +14,49 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Columns:
   - columnTitle: 'Edit Column Title: 1'
-    tasks: []
+    tasks:
+    - taskText: New Task
+      taskColour: {r: 1, g: 1, b: 1, a: 1}
+      taskState: 1
+      parentColumnIndex: 0
+    - taskText: New Task
+      taskColour: {r: 1, g: 1, b: 1, a: 1}
+      taskState: 1
+      parentColumnIndex: 0
   - columnTitle: 'Edit Column Title: 2'
-    tasks: []
+    tasks:
+    - taskText: New Task
+      taskColour: {r: 1, g: 1, b: 1, a: 1}
+      taskState: 1
+      parentColumnIndex: 1
   - columnTitle: 'Edit Column Title: 3'
     tasks:
     - taskText: New Task
       taskColour: {r: 1, g: 1, b: 1, a: 1}
       taskState: 1
       parentColumnIndex: 2
+    - taskText: New Task
+      taskColour: {r: 1, g: 1, b: 1, a: 1}
+      taskState: 1
+      parentColumnIndex: 2
+    - taskText: New Task
+      taskColour: {r: 1, g: 1, b: 1, a: 1}
+      taskState: 1
+      parentColumnIndex: 2
   - columnTitle: 'Edit Column Title: 4'
+    tasks:
+    - taskText: New Task
+      taskColour: {r: 1, g: 1, b: 1, a: 1}
+      taskState: 1
+      parentColumnIndex: 3
+  - columnTitle: 'Edit Column Title: 5'
     tasks: []
-  sliderValue: 0
+  - columnTitle: 'Edit Column Title: 6'
+    tasks: []
+  - columnTitle: 'Edit Column Title: 7'
+    tasks:
+    - taskText: New Task
+      taskColour: {r: 1, g: 1, b: 1, a: 1}
+      taskState: 1
+      parentColumnIndex: 6
+  sliderValue: 3
