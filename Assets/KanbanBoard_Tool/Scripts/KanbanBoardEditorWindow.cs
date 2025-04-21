@@ -264,9 +264,9 @@ public class KanbanBoardEditorWindow : EditorWindow
         //stateDropdown.Init(/*initialise in the board editor*/);
 
         // Register callbacks for updating the task data (task, state, colour)
-        taskText.RegisterValueChangedCallback(evt => DebounceAndSaveTaskCards(() => taskData.taskText = evt.newValue, taskContainer, taskData));
-        taskColour.RegisterValueChangedCallback(evt => DebounceAndSaveTaskCards(() => taskData.taskColour = evt.newValue, taskContainer, taskData));
-        stateDropdown.RegisterValueChangedCallback(evt => DebounceAndSaveTaskCards(() => taskData.taskState = (KanbanTaskState)evt.newValue, taskContainer, taskData));
+        taskText.RegisterValueChangedCallback(evt => DebounceAndSaveTaskCards(() => taskData.taskText = evt.newValue, taskCard, taskData));
+        taskColour.RegisterValueChangedCallback(evt => DebounceAndSaveTaskCards(() => taskData.taskColour = evt.newValue, taskCard, taskData));
+        stateDropdown.RegisterValueChangedCallback(evt => DebounceAndSaveTaskCards(() => taskData.taskState = (KanbanTaskState)evt.newValue, taskCard, taskData));
 
         // Register callbacks for drag and drop
         taskCard.RegisterCallback<PointerDownEvent>(evt => OnTaskPointerDown(evt, taskCard));
@@ -351,16 +351,17 @@ public class KanbanBoardEditorWindow : EditorWindow
 
                 newParentTaskBox.Add(taskCard); // Add the task card to the new parent task box
 
-                taskCard.style.left = 0; // Reset the left position
-                taskCard.style.top = 0; // Reset the top position
+                // Reset card position so they sit in columns correctly
+                taskCard.style.left = 0;
+                taskCard.style.top = 0;
 
                 MarkDirtyAndSave();
             }
 
             else // Checking if dropped in the BoardEditor
             {
-                var boardEditor = rootVisualElement.Q<VisualElement>("BoardEditor"); // Allows the taskCard to be dropped in the BoardEditor
-                var boardEditorBox = rootVisualElement.Q<VisualElement>("BoardEditorBox"); // Which then slots into the NewTaskBox
+                VisualElement boardEditor = rootVisualElement.Q<VisualElement>("BoardEditor"); // Allows the taskCard to be dropped in the BoardEditor
+                VisualElement boardEditorBox = rootVisualElement.Q<VisualElement>("BoardEditorBox"); // Which then slots into the NewTaskBox
 
                 if (boardEditor.worldBound.Contains(evt.position))
                 {
@@ -373,7 +374,7 @@ public class KanbanBoardEditorWindow : EditorWindow
                         columnData.tasks.Remove(taskData);
                     }
 
-                    if (kanbanData.UnassignedTaskBox.Count > 0 || kanbanData.UnassignedTaskBox.Contains(taskData))
+                    if (kanbanData.UnassignedTaskBox.Count == 0 || kanbanData.UnassignedTaskBox.Contains(taskData))
                     {
                         if (!kanbanData.UnassignedTaskBox.Contains(taskData))
                             kanbanData.UnassignedTaskBox.Add(taskData);
@@ -431,7 +432,7 @@ public class KanbanBoardEditorWindow : EditorWindow
         }, .5f);
     }
 
-    private void DebounceAndSaveTaskCards(Action updateAction, VisualElement taskcard, TaskData task)
+    private void DebounceAndSaveTaskCards(Action updateAction, VisualElement taskcard, TaskData taskData)
     {
         updateAction.Invoke();
         DebounceUtility.Debounce(() =>

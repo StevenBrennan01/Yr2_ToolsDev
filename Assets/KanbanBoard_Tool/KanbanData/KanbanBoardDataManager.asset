@@ -12,14 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4047943f4df3a3d46b24b4f9f962f982, type: 3}
   m_Name: KanbanBoardDataManager
   m_EditorClassIdentifier: 
-  Columns:
-  - columnTitle: 'Edit Column Title: 1'
-    tasks: []
-  - columnTitle: 'Edit Column Title: 2'
-    tasks: []
-  - columnTitle: 'Edit Column Title: 3'
-    tasks: []
-  - columnTitle: 'Edit Column Title: 4'
-    tasks: []
+  Columns: []
   UnassignedTaskBox: []
-  sliderValue: 2
+  sliderValue: 0
