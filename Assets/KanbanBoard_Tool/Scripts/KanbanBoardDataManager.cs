@@ -29,6 +29,8 @@ public enum KanbanTaskState
 {
     Working,
     Bugged,
+    NeedsPolishing,
+    Completed,
     LowPriority,
     MediumPriority,
     HighPriority,
