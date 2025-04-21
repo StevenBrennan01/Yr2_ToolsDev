@@ -16,7 +16,7 @@
                 <engine:Button text="Delete Task" name="DeleteTaskButton" class="button" />
             </engine:VisualElement>
             <engine:Label text="(Drag task back here to delete)" name="TextUnderButtons" style="position: relative; translate: 47.5px 165px; width: 147px; font-size: 10px; -unity-text-align: upper-center;" />
-            <engine:VisualElement name="NewTaskBox" style="flex-grow: 1; translate: 10px 172px; max-height: 95px; align-items: stretch; height: 104px; align-self: center; width: 232px;" />
+            <engine:VisualElement name="BoardEditorBox" style="flex-grow: 1; translate: 10px 172px; max-height: 95px; align-items: stretch; height: 104px; align-self: center; width: 232px;" />
         </engine:VisualElement>
     </engine:VisualElement>
 </engine:UXML>
