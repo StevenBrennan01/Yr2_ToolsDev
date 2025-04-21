@@ -29,20 +29,6 @@ public class KanbanBoardEditorWindow : EditorWindow
         }
 
         GenerateWindowUI();
-
-        //foreach (var columnData in kanbanData.Columns)
-        //{
-        //    LoadSavedColumnData(columnData);
-
-        //    var columnContainer = rootVisualElement.Q<VisualElement>("ColumnContainer");
-        //    var columnIndex = kanbanData.Columns.IndexOf(columnData);
-        //    var taskContainer = columnContainer.Children().ElementAt(columnIndex).Q<VisualElement>("TaskBox");
-
-        //    foreach (var task in columnData.tasks)
-        //    {
-        //        LoadSavedTaskData(task, taskContainer);
-        //    }
-        //}
     }
 
     // Saves the data when the window is closed
@@ -108,10 +94,6 @@ public class KanbanBoardEditorWindow : EditorWindow
             int columnIndex = kanbanData.Columns.Count;
             kanbanData.Columns.Add(new ColumnData { columnTitle = $"Edit Column Title: {columnIndex + 1}" });
         }
-        while (kanbanData.Columns.Count > initialColumnCount)
-        {
-            kanbanData.Columns.RemoveAt(kanbanData.Columns.Count - 1);
-        }
 
         foreach (var task in kanbanData.UnassignedTaskBox)
         {
@@ -142,7 +124,7 @@ public class KanbanBoardEditorWindow : EditorWindow
         extraColumnSlider.RegisterValueChangedCallback(evt =>
         {
             int sliderValue = (int)evt.newValue;
-            int totalColumns = 4 + sliderValue;
+            int totalColumns = initialColumnCount + sliderValue;
 
             kanbanData.sliderValue = sliderValue; // Save slider value to ScriptableObject
 
@@ -157,7 +139,7 @@ public class KanbanBoardEditorWindow : EditorWindow
 
             while (kanbanData.Columns.Count > totalColumns)
             {
-                if (kanbanData.Columns.Count <= 4) break; // Prevent removing the initial columns
+                if (kanbanData.Columns.Count <= initialColumnCount) break; // Prevent removing the initial columns
 
                 kanbanData.Columns.RemoveAt(kanbanData.Columns.Count - 1);
 

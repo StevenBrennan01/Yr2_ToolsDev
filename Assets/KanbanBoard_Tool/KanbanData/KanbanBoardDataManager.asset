@@ -20,15 +20,7 @@ MonoBehaviour:
       taskState: 1
       parentColumnIndex: 0
   - columnTitle: 'Edit Column Title: 2'
-    tasks:
-    - taskText: 'Input New Task:'
-      taskColour: {r: 0, g: 1, b: 1, a: 1}
-      taskState: 1
-      parentColumnIndex: 1
-    - taskText: 'Input New Task:'
-      taskColour: {r: 0, g: 1, b: 1, a: 1}
-      taskState: 1
-      parentColumnIndex: 1
+    tasks: []
   - columnTitle: 'Edit Column Title: 3'
     tasks:
     - taskText: 'Input New Task:'
@@ -36,6 +28,8 @@ MonoBehaviour:
       taskState: 1
       parentColumnIndex: 2
   - columnTitle: 'Edit Column Title: 4'
+    tasks: []
+  - columnTitle: 'Edit Column Title: 5'
     tasks: []
   UnassignedTaskBox: []
   sliderValue: 1
