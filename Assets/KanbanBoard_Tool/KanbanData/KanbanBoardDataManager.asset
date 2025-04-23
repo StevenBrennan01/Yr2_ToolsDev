@@ -13,33 +13,19 @@ MonoBehaviour:
   m_Name: KanbanBoardDataManager
   m_EditorClassIdentifier: 
   Columns:
-  - columnTitle: 'Edit Column Title: 1'
-    tasks:
-    - taskText: 'Input New Task:'
-      taskColour: {r: 0, g: 1, b: 1, a: 1}
-      taskState: 1
-      parentColumnIndex: 0
-    - taskText: 'Input New Task:'
-      taskColour: {r: 0, g: 1, b: 1, a: 1}
-      taskState: 1
-      parentColumnIndex: 0
-  - columnTitle: 'Edit Column Title: 2'
-    tasks:
-    - taskText: 'Input New Task:'
-      taskColour: {r: 0, g: 1, b: 1, a: 1}
-      taskState: 1
-      parentColumnIndex: 1
-  - columnTitle: 'Edit Column Title: 3'
+  - columnTitle: 'Tasks To Start:'
     tasks: []
-  - columnTitle: 'Edit Column Title: 4'
+  - columnTitle: 'Tasks in Progress:'
+    tasks: []
+  - columnTitle: 'Tasks to Polish:'
+    tasks: []
+  - columnTitle: 'Finished:'
     tasks: []
   - columnTitle: 'Edit Column Title: 5'
-    tasks:
-    - taskText: 'Input New Task:'
-      taskColour: {r: 0, g: 1, b: 1, a: 1}
-      taskState: 1
-      parentColumnIndex: 4
+    tasks: []
   - columnTitle: 'Edit Column Title: 6'
     tasks: []
+  - columnTitle: 'Edit Column Title: 7'
+    tasks: []
   UnassignedTaskBox: []
-  sliderValue: 2
+  sliderValue: 3

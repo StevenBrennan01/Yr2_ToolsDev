@@ -83,7 +83,7 @@ public class KanbanBoardEditorWindow : EditorWindow
 
         VisualElement columnContainer = rootVisualElement.Q<VisualElement>("ColumnContainer");
         VisualElement boardEditorBox = rootVisualElement.Q<VisualElement>("BoardEditorBox");
-        boardEditorBox.Clear(); // Clear out old visuals
+        //boardEditorBox.Clear(); // Clear out old visuals
 
         SliderInt extraColumnSlider = rootVisualElement.Q<SliderInt>("ExtraColumnSlider");
 
@@ -169,7 +169,7 @@ public class KanbanBoardEditorWindow : EditorWindow
             {
                 taskText = "Input New Task:",
                 taskColour = Color.cyan,
-                taskState = KanbanTaskState.Bugged,
+                taskState = KanbanTaskState.Unassigned,
                 parentColumnIndex = -1 // -1 means not in a column
             };
 
@@ -236,15 +236,16 @@ public class KanbanBoardEditorWindow : EditorWindow
         taskCard.userData = taskData;
 
         TextField taskText = taskCard.Q<TextField>("TaskText");
-        EnumField stateDropdown = taskCard.Q<EnumField>("TaskState");
         ColorField taskColour = taskCard.Q<ColorField>("TaskColor");
+        EnumField stateDropdown = taskCard.Q<EnumField>("TaskState");
+        stateDropdown.Init(KanbanTaskState.Unassigned); // Set the initial value of the dropdown
+        stateDropdown.value = taskData.taskState; // Set the initial value of the dropdown to the task's state
 
         // Initializing the TaskText Colour and State
         taskText.value = taskData.taskText;
-        stateDropdown.value = taskData.taskState;
         taskColour.value = taskData.taskColour;
-        //stateDropdown.Init(/*initialise in the board editor*/);
-
+        stateDropdown.value = taskData.taskState;
+       
         // Register callbacks for updating the task data (task, state, colour)
         taskText.RegisterValueChangedCallback(evt => DebounceAndSaveTaskCards(() => taskData.taskText = evt.newValue, taskCard, taskData));
         taskColour.RegisterValueChangedCallback(evt => DebounceAndSaveTaskCards(() => taskData.taskColour = evt.newValue, taskCard, taskData));

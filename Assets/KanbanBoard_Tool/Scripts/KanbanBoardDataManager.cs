@@ -27,9 +27,10 @@ public class ColumnData
 
 public enum KanbanTaskState
 {
+    Unassigned,
     Working,
     Bugged,
-    NeedsPolishing,
+    NeedsPolish,
     Completed,
     LowPriority,
     MediumPriority,
