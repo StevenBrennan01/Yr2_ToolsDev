@@ -167,8 +167,8 @@ public class KanbanBoardEditorWindow : EditorWindow
 
             TaskData newTask = new TaskData
             {
-                taskText = "Input New Task:",
-                taskColour = Color.cyan,
+                taskText = "Edit Task Description:",
+                taskColour = Color.red,
                 taskState = KanbanTaskState.Unassigned,
                 parentColumnIndex = -1 // -1 means not in a column
             };
@@ -212,9 +212,33 @@ public class KanbanBoardEditorWindow : EditorWindow
         var taskColumnTemplate = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>("Assets/KanbanBoard_Tool/Window_UI/TaskColumn.uxml");
         var taskColumnElement = taskColumnTemplate.Instantiate();
 
+        // Set the column title
         TextField titleField = taskColumnElement.Q<TextField>("ColumnTitle");
         titleField.value = columnData.columnTitle;
         titleField.RegisterValueChangedCallback(evt => DebounceAndSaveColumnTitles(() => columnData.columnTitle = evt.newValue, titleField));
+
+        // Set the column title color
+        ColorField columnTitleColour = taskColumnElement.Q<ColorField>("TitleColorEditor");
+        columnTitleColour.value = columnData.titleBorderColor; // Set the initial color
+
+        titleField.style.borderTopColor = columnData.titleBorderColor;
+        titleField.style.borderBottomColor = columnData.titleBorderColor;
+        titleField.style.borderLeftColor = columnData.titleBorderColor;
+        titleField.style.borderRightColor = columnData.titleBorderColor;
+
+        columnTitleColour.RegisterValueChangedCallback(evt =>
+        {
+            titleField.style.borderTopColor = evt.newValue;
+            titleField.style.borderBottomColor = evt.newValue;
+            titleField.style.borderLeftColor = evt.newValue;
+            titleField.style.borderRightColor = evt.newValue;
+
+            columnData.titleBorderColor = evt.newValue; // Save the new color to the ScriptableObject
+            DebounceUtility.Debounce(() =>
+            {
+                MarkDirtyAndSave();
+            }, .5f);
+        });
 
         // Now checks for tasks that should be within these columns
         VisualElement taskBox = taskColumnElement.Q<VisualElement>("TaskBox");
@@ -309,9 +333,21 @@ public class KanbanBoardEditorWindow : EditorWindow
             {
                 if (column.worldBound.Contains(evt.position))
                 {
-                    newParentTaskBox = column.Q<VisualElement>("TaskBox");
-                    newParentColumnIndex = columnContainer.IndexOf(column);
-                    break;
+                    VisualElement taskBox = column.Q<VisualElement>("TaskBox");
+                    if (taskBox.childCount >= 10)
+                    {
+                        Debug.Log($"Sorry! {column} is full!"); // Check if the column is full
+                        originalParent.Add(taskCard); // Reset to original parent if column is full
+                        taskCard.style.left = originalPosition.x;
+                        taskCard.style.top = originalPosition.y;
+                        return;
+                    }
+                    else
+                    {
+                        newParentTaskBox = column.Q<VisualElement>("TaskBox");
+                        newParentColumnIndex = columnContainer.IndexOf(column);
+                        break;
+                    }
                 }
             }
 
