@@ -314,7 +314,7 @@ public class KanbanBoardEditorWindow : EditorWindow
             rootVisualElement.Add(taskCard); // making the root element while dragging fixes card positioning issues
 
             // Update card's position (the -15 corrects the position of the card relative to the mouse a bit)
-            taskCard.style.left = newCardLocalPosition.x -15;
+            taskCard.style.left = newCardLocalPosition.x - 5f;
             taskCard.style.top = newCardLocalPosition.y;
         }
     }
@@ -334,9 +334,10 @@ public class KanbanBoardEditorWindow : EditorWindow
                 if (column.worldBound.Contains(evt.position))
                 {
                     VisualElement taskBox = column.Q<VisualElement>("TaskBox");
+
                     if (taskBox.childCount >= 10)
                     {
-                        Debug.Log($"Sorry! {column} is full!"); // Check if the column is full
+                        Debug.Log("Sorry, that column is full"); // Check if the column is full
                         originalParent.Add(taskCard); // Reset to original parent if column is full
                         taskCard.style.left = originalPosition.x;
                         taskCard.style.top = originalPosition.y;
@@ -427,17 +428,17 @@ public class KanbanBoardEditorWindow : EditorWindow
         }
     }
 
-    //private void ApplyVisualOnState()
+    //private void ApplyVisualOnState(VisualElement taskCard)
     //{
-    //    apply visual changes based on the task state
+    //    //apply visual changes based on the task state
 
-    //    switch (newstate)
+    //    switch ()
     //    {
-    //        case kanbantaskstate.working:
-    //            taskcard.style.backgroundcolor = new color(0.5f, 0.5f, 1f); // blue
+    //        case KanbanTaskState.Working:
+    //            taskCard.style.backgroundColor = new Color(0.5f, 0.5f, 1f); // blue
     //            break;
-    //        case kanbantaskstate.bugged:
-    //            taskcard.style.backgroundcolor = new color(1f, 0.5f, 0.5f); // red
+    //        case KanbanTaskState.Bugged:
+    //            taskCard.style.backgroundColor = new Color(1f, 0.5f, 0.5f); // red
     //            break;
     //    }
     //}

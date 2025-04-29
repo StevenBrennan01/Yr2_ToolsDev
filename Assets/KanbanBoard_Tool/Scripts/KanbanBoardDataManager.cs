@@ -6,6 +6,7 @@ public class KanbanBoardDataManager : ScriptableObject
 {
     public List<ColumnData> Columns = new List<ColumnData>();
     public List<TaskData> UnassignedTaskBox = new List<TaskData>();
+
     public int sliderValue;
 }
 

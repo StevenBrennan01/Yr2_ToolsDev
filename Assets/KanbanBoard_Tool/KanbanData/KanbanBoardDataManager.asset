@@ -12,6 +12,22 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4047943f4df3a3d46b24b4f9f962f982, type: 3}
   m_Name: KanbanBoardDataManager
   m_EditorClassIdentifier: 
-  Columns: []
-  UnassignedTaskBox: []
+  Columns:
+  - columnTitle: 'Edit Column Title: 1'
+    titleBorderColor: {r: 1, g: 0.37254903, b: 0, a: 1}
+    tasks: []
+  - columnTitle: 'Edit Column Title: 2'
+    titleBorderColor: {r: 1, g: 0.37254903, b: 0, a: 1}
+    tasks: []
+  - columnTitle: 'Edit Column Title: 3'
+    titleBorderColor: {r: 1, g: 0.37254903, b: 0, a: 1}
+    tasks: []
+  - columnTitle: 'Edit Column Title: 4'
+    titleBorderColor: {r: 1, g: 0.37254903, b: 0, a: 1}
+    tasks: []
+  UnassignedTaskBox:
+  - taskText: 'Edit Task Description:'
+    taskColour: {r: 1, g: 0, b: 0, a: 1}
+    taskState: 0
+    parentColumnIndex: -1
   sliderValue: 0

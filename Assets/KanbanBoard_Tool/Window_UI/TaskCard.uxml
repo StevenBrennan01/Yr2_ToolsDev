@@ -4,7 +4,7 @@
         <engine:Label text="Task:&#10;" name="TitleLabel" style="position: relative; height: 14px; width: 37px; -unity-text-align: middle-center; white-space: nowrap; text-overflow: clip; font-size: 15px; -unity-text-outline-color: rgb(0, 0, 0); -unity-text-outline-width: 0; -unity-font-style: bold; translate: -75px 5px;" />
         <editor:ColorField value="#00FFCCFF" name="TaskColor" show-alpha="false" hdr="false" style="width: 61px; position: absolute; translate: 63px 3px; align-items: flex-end; flex-direction: row; align-self: auto;" />
         <engine:TextField placeholder-text="TaskToDo:" name="TaskText" style="width: 198px; height: 25px; font-size: 13px; translate: 0 10px;" />
-        <engine:Label text="Task State:" name="StateLabel" style="position: relative; height: 14px; width: 81px; -unity-text-align: middle-center; white-space: nowrap; text-overflow: clip; font-size: 15px; -unity-text-outline-color: rgb(0, 0, 0); -unity-text-outline-width: 0; -unity-font-style: bold; translate: -54px 15px;" />
-        <engine:EnumField value="Center" type="UnityEngine.TextAlignment, UnityEngine.TextRenderingModule" include-obsolete-values="false" name="TaskState" style="translate: 40px -1px; width: 100px; flex-direction: column;" />
+        <engine:Label text="State:" name="StateLabel" style="position: relative; height: 14px; width: 47px; -unity-text-align: middle-center; white-space: nowrap; text-overflow: clip; font-size: 15px; -unity-text-outline-color: rgb(0, 0, 0); -unity-text-outline-width: 0; -unity-font-style: bold; translate: -71px 15px;" />
+        <engine:EnumField value="Center" type="UnityEngine.TextAlignment, UnityEngine.TextRenderingModule" include-obsolete-values="false" name="TaskState" style="translate: 7px -1px; width: 111px; flex-direction: column;" />
     </engine:VisualElement>
 </engine:UXML>
