@@ -1,11 +1,9 @@
 using System;
 using System.Linq;
-using System.Runtime.CompilerServices;
 using UnityEditor;
 using UnityEditor.UIElements;
 using UnityEngine;
 using UnityEngine.UIElements;
-using UnityEngine.Windows;
 
 public class KanbanBoardEditorWindow : EditorWindow
 {
@@ -98,7 +96,7 @@ public class KanbanBoardEditorWindow : EditorWindow
             // Creates a new string that removes any non integer characters
             dateInput = new string(dateInput.Where(c => char.IsDigit(c)).ToArray());
 
-            // Format the input as dd/mm/yyyy
+            // Formatting the input as DD/MM/YYYY
             if (dateInput.Length > 2)
                 dateInput = dateInput.Insert(2, "/");
             if (dateInput.Length > 5)
