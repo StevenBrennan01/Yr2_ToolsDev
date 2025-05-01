@@ -1,9 +1,11 @@
 using System;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using UnityEditor;
 using UnityEditor.UIElements;
 using UnityEngine;
 using UnityEngine.UIElements;
+using UnityEngine.Windows;
 
 public class KanbanBoardEditorWindow : EditorWindow
 {
@@ -83,10 +85,60 @@ public class KanbanBoardEditorWindow : EditorWindow
 
         VisualElement columnContainer = rootVisualElement.Q<VisualElement>("ColumnContainer");
         VisualElement boardEditorBox = rootVisualElement.Q<VisualElement>("BoardEditorBox");
-        //boardEditorBox.Clear(); // Clear out old visuals
 
         SliderInt extraColumnSlider = rootVisualElement.Q<SliderInt>("ExtraColumnSlider");
+        TextField dueDate = rootVisualElement.Q<TextField>("DueDateField");
 
+        // Due Date Setup
+        dueDate.value = kanbanData.dueDate;
+        dueDate.RegisterValueChangedCallback(evt =>
+        {
+            string dateInput = evt.newValue;
+
+            // Remove any non-numeric characters except slashes
+            dateInput = new string(dateInput.Where(c => char.IsDigit(c)).ToArray());
+
+            // Format the input as dd/mm/yyyy
+            if (dateInput.Length > 2)
+                dateInput = dateInput.Insert(2, "/");
+            if (dateInput.Length > 5)
+                dateInput = dateInput.Insert(5, "/");
+            if (dateInput.Length > 10)
+                dateInput = dateInput.Substring(0, 10); // Limit to 10 characters
+
+            int caretPosition = dueDate.cursorIndex;
+
+            dueDate.SetValueWithoutNotify(dateInput); // Update the field without triggering the callback
+
+            // Set/Bump forward the caret position because it isn't
+            // updating programmatically whilst the date is being formatted
+            if (caretPosition == 2 || caretPosition == 5)
+            {
+                caretPosition++;
+            }
+            dueDate.cursorIndex = caretPosition;
+
+            if (dateInput.Length == 10) 
+            {
+                kanbanData.dueDate = dateInput;
+                DebounceUtility.Debounce(() =>
+                {
+                    MarkDirtyAndSave();
+                }, .5f);
+            }
+            else if (dateInput.Length == 0)
+            {
+                kanbanData.dueDate = "DD/MM/YYYY";
+                DebounceUtility.Debounce(() =>
+                {
+                    MarkDirtyAndSave();
+                }, .5f);
+            }
+        });
+
+        
+
+        // Column Setup
         int initialColumnCount = 4; // Initial number of columns
 
         while (kanbanData.Columns.Count < initialColumnCount)

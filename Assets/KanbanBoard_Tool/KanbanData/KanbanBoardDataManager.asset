@@ -25,9 +25,6 @@ MonoBehaviour:
   - columnTitle: 'Edit Column Title: 4'
     titleBorderColor: {r: 1, g: 0.37254903, b: 0, a: 1}
     tasks: []
-  UnassignedTaskBox:
-  - taskText: 'Edit Task Description:'
-    taskColour: {r: 1, g: 0, b: 0, a: 1}
-    taskState: 0
-    parentColumnIndex: -1
+  UnassignedTaskBox: []
   sliderValue: 0
+  dueDate: DD/MM/YYYY

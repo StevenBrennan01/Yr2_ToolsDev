@@ -8,6 +8,7 @@ public class KanbanBoardDataManager : ScriptableObject
     public List<TaskData> UnassignedTaskBox = new List<TaskData>();
 
     public int sliderValue;
+    public string dueDate = "DD/MM/YYYY";
 }
 
 [System.Serializable]
