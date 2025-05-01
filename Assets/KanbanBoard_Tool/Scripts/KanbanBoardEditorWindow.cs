@@ -95,7 +95,7 @@ public class KanbanBoardEditorWindow : EditorWindow
         {
             string dateInput = evt.newValue;
 
-            // Remove any non-numeric characters except slashes
+            // Creates a new string that removes any non integer characters
             dateInput = new string(dateInput.Where(c => char.IsDigit(c)).ToArray());
 
             // Format the input as dd/mm/yyyy
@@ -118,7 +118,7 @@ public class KanbanBoardEditorWindow : EditorWindow
             }
             dueDate.cursorIndex = caretPosition;
 
-            if (dateInput.Length == 10) 
+            if (dateInput.Length == 10)
             {
                 kanbanData.dueDate = dateInput;
                 DebounceUtility.Debounce(() =>
@@ -135,8 +135,6 @@ public class KanbanBoardEditorWindow : EditorWindow
                 }, .5f);
             }
         });
-
-        
 
         // Column Setup
         int initialColumnCount = 4; // Initial number of columns
