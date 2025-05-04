@@ -18,7 +18,7 @@ public class KanbanBoardEditorWindow : EditorWindow
 
     private void OnEnable()
     {
-        string dataAssetPath = "Assets/KanbanBoard_Tool/KanbanData/KanbanBoardDataManager.asset";
+        string dataAssetPath = "Assets/KanbanBoard_Tool/KanbanDataSO/KanbanBoardDataManager.asset";
 
         kanbanData = AssetDatabase.LoadAssetAtPath<KanbanBoardDataManager>(dataAssetPath);
 
