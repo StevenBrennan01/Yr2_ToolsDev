@@ -255,6 +255,7 @@ public class KanbanBoardEditorWindow : EditorWindow
             columnContainer.Clear();
             boardEditorBox.Clear();
             extraColumnSlider.value = 0;
+            dueDate.SetValueWithoutNotify("DD/MM/YYYY");
 
             foreach (var columnData in kanbanData.Columns)
             {

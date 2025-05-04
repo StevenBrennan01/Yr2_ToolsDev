@@ -13,10 +13,6 @@ public class KanbanBoardDataManager : ScriptableObject
     {
         Columns.Clear();
         UnassignedTaskBox.Clear();
-        //for (int i = 0; i < 4; i++)
-        //{
-        //    Columns.Add(new ColumnData { columnTitle = $"Edit Column Title: {i + 1}", titleBorderColor = new Color(255f/255f, 95f/255f, 0f/225f, 1) });
-        //}
         sliderValue = 0;
         dueDate = "DD/MM/YYYY";
     }
