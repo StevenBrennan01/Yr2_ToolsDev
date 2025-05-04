@@ -3,30 +3,36 @@
 
 .boardHeaders {
     width: 0;
-    min-width: 140px;
+    min-width: 145px;
     -unity-font-style: bold;
-    -unity-text-align: upper-center;
+    -unity-text-align: upper-left;
     white-space: normal;
-    text-overflow: clip;
+    text-overflow: ellipsis;
     letter-spacing: 8px;
     word-spacing: 0;
     background-color: rgba(198, 198, 198, 0);
     -unity-background-image-tint-color: rgba(255, 255, 255, 0);
     -unity-text-outline-color: rgba(255, 255, 255, 0);
-    border-left-color: rgb(0, 255, 149);
-    border-right-color: rgb(0, 255, 149);
-    border-top-color: rgb(0, 255, 149);
-    border-bottom-color: rgb(0, 255, 149);
+    border-left-color: rgb(255, 81, 0);
+    border-right-color: rgb(255, 81, 0);
+    border-top-color: rgb(255, 81, 0);
+    border-bottom-color: rgb(255, 81, 0);
     border-top-width: 2px;
     border-right-width: 2px;
     border-bottom-width: 2px;
     border-left-width: 2px;
+    border-top-left-radius: 3px;
+    border-top-right-radius: 3px;
+    border-bottom-right-radius: 3px;
+    border-bottom-left-radius: 3px;
+    color: rgb(255, 255, 255);
+    font-size: 11px;
 }
 
 .taskBoard {
-    margin-right: 10px;
+    margin-right: 12px;
     max-width: none;
-    min-height: 620px;
+    min-height: 810px;
     min-width: 130px;
     background-color: rgba(0, 0, 0, 0);
 }
@@ -38,4 +44,47 @@
     height: 25px;
     width: 165px;
     translate: 35px 0;
+}
+
+.button:hover {
+    scale: 1.1 1.1;
+    transition-duration: 0.2s;
+    transition-delay: 0s;
+    rotate: 0;
+    border-left-color: rgb(255, 255, 255);
+    border-right-color: rgb(255, 255, 255);
+    border-top-color: rgb(255, 255, 255);
+    border-bottom-color: rgb(255, 255, 255);
+    border-top-width: 1px;
+    border-right-width: 1px;
+    border-bottom-width: 1px;
+    border-left-width: 1px;
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+    border-bottom-right-radius: 5px;
+    border-bottom-left-radius: 5px;
+    -unity-background-image-tint-color: rgb(255, 255, 255);
+    background-color: rgb(34, 34, 34);
+}
+
+.resetDataButton:hover {
+    transition-duration: 0.2s;
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+    border-bottom-right-radius: 5px;
+    border-bottom-left-radius: 5px;
+    border-top-width: 1px;
+    border-right-width: 1px;
+    border-bottom-width: 1px;
+    border-left-width: 1px;
+    border-left-color: rgb(255, 0, 0);
+    border-right-color: rgb(255, 0, 0);
+    border-top-color: rgb(255, 0, 0);
+    border-bottom-color: rgb(255, 0, 0);
+    scale: 1.1 1.1;
+    color: rgb(255, 255, 255);
+    background-color: rgba(188, 0, 0, 0.77);
+}
+
+.resetDataButton {
 }

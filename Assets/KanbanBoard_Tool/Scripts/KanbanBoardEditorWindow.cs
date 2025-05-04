@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using UnityEditor;
 using UnityEditor.UIElements;
 using UnityEngine;
@@ -17,7 +18,7 @@ public class KanbanBoardEditorWindow : EditorWindow
 
     private void OnEnable()
     {
-        string dataAssetPath = "Assets/KanbanBoard_Tool/KanbanData/KanbanBoardDataManager.asset";
+        string dataAssetPath = "Assets/KanbanBoard_Tool/KanbanDataSO/KanbanBoardDataManager.asset";
 
         kanbanData = AssetDatabase.LoadAssetAtPath<KanbanBoardDataManager>(dataAssetPath);
 
@@ -25,10 +26,8 @@ public class KanbanBoardEditorWindow : EditorWindow
         {
             kanbanData = CreateInstance<KanbanBoardDataManager>();
             AssetDatabase.CreateAsset(kanbanData, dataAssetPath);
-            Debug.Log("Created new KanbanBoardDataManager asset.");
         }
-        
-        //rootVisualElement.Clear();
+
         GenerateWindowUI();
     }
 
@@ -73,260 +72,467 @@ public class KanbanBoardEditorWindow : EditorWindow
 
         #endregion
 
-        CreateNewTaskCard();
+        InitUIElements();
     }
 
-    private void CreateNewTaskCard() // refresh is refreshing every element even the ones that are not being edited, needs to be optimized
+    private void InitUIElements()
     {
         // Add/Delete task buttons
         Button addTaskButton = rootVisualElement.Q<Button>("AddTaskButton");
         Button deleteTaskButton = rootVisualElement.Q<Button>("DeleteTaskButton");
 
-        // Column Types (currently: todo, in progress, to polish, finished) 
-        // *Look into allowing the user to add more columns*
-        VisualElement newTaskBox = rootVisualElement.Q<VisualElement>("NewTaskBox");
-        VisualElement Column1 = rootVisualElement.Q<VisualElement>("Column1");
-        VisualElement Column2 = rootVisualElement.Q<VisualElement>("Column2");
-        VisualElement Column3 = rootVisualElement.Q<VisualElement>("Column3");
-        VisualElement Column4 = rootVisualElement.Q<VisualElement>("Column4");
+        Button resetDataButton = rootVisualElement.Q<Button>("ResetDataButton");
 
-        // Column Titles
-        TextField column1Title = rootVisualElement.Q<TextField>("FirstColumnTitle");
-        TextField column2Title = rootVisualElement.Q<TextField>("SecondColumnTitle");
-        TextField column3Title = rootVisualElement.Q<TextField>("ThirdColumnTitle");
-        TextField column4Title = rootVisualElement.Q<TextField>("FourthColumnTitle");
+        VisualElement columnContainer = rootVisualElement.Q<VisualElement>("ColumnContainer");
+        VisualElement boardEditorBox = rootVisualElement.Q<VisualElement>("BoardEditorBox");
 
-        column1Title.value = kanbanData.column1Title;
-        column2Title.value = kanbanData.column2Title;
-        column3Title.value = kanbanData.column3Title;
-        column4Title.value = kanbanData.column4Title;
+        SliderInt extraColumnSlider = rootVisualElement.Q<SliderInt>("ExtraColumnSlider");
+        TextField dueDate = rootVisualElement.Q<TextField>("DueDateField");
 
-        // Use this to only allow for one task card to be created at a time
-        int NewTaskCount = 0;
+        // Due Date Setup
+        dueDate.value = kanbanData.dueDate;
+        dueDate.RegisterValueChangedCallback(evt =>
+        {
+            string dateInput = evt.newValue;
 
-        // Adding new task into the BoardEditor
+            // Creates a new string that removes any non integer characters
+            dateInput = new string(dateInput.Where(c => char.IsDigit(c)).ToArray());
+
+            // Formatting the input as DD/MM/YYYY
+            if (dateInput.Length > 2)
+                dateInput = dateInput.Insert(2, "/");
+            if (dateInput.Length > 5)
+                dateInput = dateInput.Insert(5, "/");
+            if (dateInput.Length > 10)
+                dateInput = dateInput.Substring(0, 10); // Limit to 10 characters
+
+            int caretPosition = dueDate.cursorIndex;
+
+            dueDate.SetValueWithoutNotify(dateInput); // Update the field without triggering the callback
+
+            // Set/Bump forward the caret position because it isn't
+            // updating programmatically whilst the date is being formatted
+            if (caretPosition == 2 || caretPosition == 5)
+            {
+                caretPosition++;
+            }
+            dueDate.cursorIndex = caretPosition;
+
+            if (dateInput.Length == 10)
+            {
+                kanbanData.dueDate = dateInput;
+                DebounceUtility.Debounce(() =>
+                {
+                    MarkDirtyAndSave();
+                }, .5f);
+            }
+            else if (dateInput.Length == 0)
+            {
+                kanbanData.dueDate = "DD/MM/YYYY";
+                DebounceUtility.Debounce(() =>
+                {
+                    MarkDirtyAndSave();
+                }, .5f);
+            }
+        });
+
+        // Column Setup
+        int initialColumnCount = 4; // Initial number of columns
+
+        while (kanbanData.Columns.Count < initialColumnCount)
+        {
+            int columnIndex = kanbanData.Columns.Count;
+            kanbanData.Columns.Add(new ColumnData { columnTitle = $"Edit Column Title: {columnIndex + 1}" });
+        }
+
+        foreach (var task in kanbanData.UnassignedTaskBox)
+        {
+            var taskCard = LoadSavedTaskData(task, boardEditorBox);
+            boardEditorBox.Add(taskCard);
+        }
+
+        foreach (var columnData in kanbanData.Columns)
+        {
+            LoadSavedColumnData(columnData);
+
+            var columnIndex = kanbanData.Columns.IndexOf(columnData);
+            var taskContainer = columnContainer.Children().ElementAt(columnIndex).Q<VisualElement>("TaskBox");
+
+            foreach (var task in columnData.tasks)
+            {
+                LoadSavedTaskData(task, taskContainer);
+            }
+        }
+
+        // Set the slider value to the current number of extra columns
+        if (extraColumnSlider != null)
+        {
+            extraColumnSlider.value = kanbanData.sliderValue;
+        }
+
+        #region Extra Column Slider
+        extraColumnSlider.RegisterValueChangedCallback(evt =>
+        {
+            int sliderValue = (int)evt.newValue;
+            int totalColumns = initialColumnCount + sliderValue;
+
+            kanbanData.sliderValue = sliderValue; // Save slider value to ScriptableObject
+
+            while (kanbanData.Columns.Count < totalColumns)
+            {
+                int columnIndex = kanbanData.Columns.Count;
+                var newColumn = new ColumnData { columnTitle = $"Edit Column Title: {columnIndex + 1}" }; // Persist new column title
+                kanbanData.Columns.Add(newColumn);
+
+                LoadSavedColumnData(newColumn);
+            }
+
+            while (kanbanData.Columns.Count > totalColumns)
+            {
+                if (kanbanData.Columns.Count <= initialColumnCount) break; // Prevent removing the initial columns
+
+                kanbanData.Columns.RemoveAt(kanbanData.Columns.Count - 1);
+
+                VisualElement lastColumn = rootVisualElement.Q<VisualElement>("ColumnContainer").Children().Last();
+                columnContainer.Remove(lastColumn);
+
+            }
+
+            MarkDirtyAndSave();
+        });
+        #endregion
+
+        #region Add/Delete Task Buttons + Reset Board Button
+
+        // Button for adding new task into the BoardEditor
         addTaskButton.RegisterCallback<ClickEvent>(evt =>
         {
-
-            Debug.Log("Instantiating new task card");
-
-            // Add a new task to the new task box (board editor)
-            KanbanTask newTask = new KanbanTask();
-            kanbanData.Tasks.Add(newTask);
-
-            // Instantiating a card for the new task
-            VisualElement taskCard = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>("Assets/KanbanBoard_Tool/Window_UI/TaskCard.uxml").Instantiate();
-
-            if (taskCard == null)
+            if (kanbanData.UnassignedTaskBox.Count > 0) // Only allowing one at a time
             {
-                Debug.Log("Instantiating TaskCard failed");
+                Debug.LogWarning("An unassigned Task already exists in the Board Editor");
                 return;
             }
 
-            // THIS IS GENERATING A FRESH TASK CARD FOR THE NEW TASK
-            PopulateTaskCard(taskCard, newTask);
-            newTaskBox.Add(taskCard);
+            TaskData newTask = new TaskData
+            {
+                taskText = "Edit Task Description:",
+                taskColour = Color.red,
+                taskState = KanbanTaskState.Unassigned,
+                parentColumnIndex = -1 // -1 means not in a column
+            };
+
+            kanbanData.UnassignedTaskBox.Add(newTask);
+
+            var taskCard = LoadSavedTaskData(newTask, boardEditorBox);
+            boardEditorBox.Add(taskCard);
+
+            MarkDirtyAndSave();
         });
 
-        // Deleting the last task in the BoardEditor
+        // Button for deleting the last task in the BoardEditor
         // *Maybe try and make it so that the user can delete a selected task in the future*
         deleteTaskButton.RegisterCallback<ClickEvent>(evt =>
         {
-            Debug.Log("Deleting task card");
-
-            // Delete the last task in the new task box
-            if (kanbanData.Tasks.Count > 0)
+            if (kanbanData.UnassignedTaskBox.Count > 0)
             {
-                kanbanData.Tasks.RemoveAt(kanbanData.Tasks.Count - 1);
-                newTaskBox.RemoveAt(newTaskBox.childCount - 1);
-            }
-        });
-
-        column1Title.RegisterValueChangedCallback(evt =>
-        {
-            kanbanData.column1Title = evt.newValue;
-        });
-
-        column2Title.RegisterValueChangedCallback(evt =>
-        {
-            kanbanData.column2Title = evt.newValue;
-        });
-
-        column3Title.RegisterValueChangedCallback(evt =>
-        {
-            kanbanData.column3Title = evt.newValue;
-        });
-
-        column4Title.RegisterValueChangedCallback(evt =>
-        {
-            kanbanData.column4Title = evt.newValue;
-        });
-
-        if (kanbanData.Tasks.Count == 0)
-        {
-            Debug.Log("No tasks found in the data manager.");
-        }
-
-        var taskCardTemplate = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>("Assets/KanbanBoard_Tool/Window_UI/TaskCard.uxml");
-        if (taskCardTemplate != null)
-        {
-            // Generating Task Cards
-            foreach (var task in kanbanData.Tasks)
-            {
-                // Instantiating a card for each task that exists
-                VisualElement taskCard = taskCardTemplate.Instantiate();
-
-                if (taskCard == null)
-                {
-                    Debug.Log("Instantiating TaskCard failed");
-                    continue;
-                }
-
-                // THIS IS POPULATING THE GENERATED NEW TASK CARD WITH THE TASK DATA
-                PopulateTaskCard(taskCard, task);
-
-                // MOVING THE TASK CARDS INTO THE CORRECT STATE COLUMNS
-                switch (task.taskState)
-                {
-                    case KanbanTaskState.ToDo:
-                        Column1.Add(taskCard);
-                        break;
-                    case KanbanTaskState.InProgress:
-                        Column2.Add(taskCard);
-                        break;
-                    case KanbanTaskState.ToPolish:
-                        Column3.Add(taskCard);
-                        break;
-                    case KanbanTaskState.Finished:
-                        Column4.Add(taskCard);
-                        break;
-                    case KanbanTaskState.BoardEditor:
-                        newTaskBox.Add(taskCard);
-                        break;
-                }
+                kanbanData.UnassignedTaskBox.Clear();
+                boardEditorBox.Clear();
                 MarkDirtyAndSave();
             }
-        }
-        else
+        });
+
+        //Button for RESETTING ALL DATA
+        resetDataButton.RegisterCallback<ClickEvent>(evt =>
         {
-            Debug.Log("Cannot find TaskCard.uxml file. Check the path and file name.");
-        }
+            kanbanData.ResetKanbanData();
+
+            while (kanbanData.Columns.Count < initialColumnCount)
+            {
+                int columnIndex = kanbanData.Columns.Count;
+                kanbanData.Columns.Add(new ColumnData { columnTitle = $"Edit Column Title: {columnIndex + 1}" });
+            }
+
+            columnContainer.Clear();
+            boardEditorBox.Clear();
+            extraColumnSlider.value = 0;
+            dueDate.SetValueWithoutNotify("DD/MM/YYYY");
+
+            foreach (var columnData in kanbanData.Columns)
+            {
+                LoadSavedColumnData(columnData);
+
+                var columnIndex = kanbanData.Columns.IndexOf(columnData);
+                var taskContainer = columnContainer.Children().ElementAt(columnIndex).Q<VisualElement>("TaskBox");
+            }
+
+            MarkDirtyAndSave();
+        });
+        #endregion
     }
 
-    private VisualElement PopulateTaskCard(VisualElement taskCard, KanbanTask task)
+    private void LoadSavedColumnData(ColumnData columnData)
+    {
+        VisualElement columnContainer = rootVisualElement.Q<VisualElement>("ColumnContainer");
+
+        foreach (var child in columnContainer.Children())
+        {
+            TextField existingTitleField = child.Q<TextField>("ColumnTitle");
+            if (existingTitleField != null && existingTitleField.value == columnData.columnTitle)
+            {
+                //Debug.LogWarning($"Column with title '{columnData.columnTitle}' already exists in the UI.");
+                return; // Prevent duplicate instantiation
+            }
+        }
+
+        var taskColumnTemplate = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>("Assets/KanbanBoard_Tool/Window_UI/TaskColumn.uxml");
+        var taskColumnElement = taskColumnTemplate.Instantiate();
+
+        // Set the column title
+        TextField titleField = taskColumnElement.Q<TextField>("ColumnTitle");
+        titleField.value = columnData.columnTitle;
+        titleField.RegisterValueChangedCallback(evt => DebounceAndSaveColumnTitles(() => columnData.columnTitle = evt.newValue, titleField));
+
+        // Set the column title color
+        ColorField columnTitleColour = taskColumnElement.Q<ColorField>("TitleColorEditor");
+        columnTitleColour.value = columnData.titleBorderColor; // Set the initial color
+
+        titleField.style.borderTopColor = columnData.titleBorderColor;
+        titleField.style.borderBottomColor = columnData.titleBorderColor;
+        titleField.style.borderLeftColor = columnData.titleBorderColor;
+        titleField.style.borderRightColor = columnData.titleBorderColor;
+
+        columnTitleColour.RegisterValueChangedCallback(evt =>
+        {
+            titleField.style.borderTopColor = evt.newValue;
+            titleField.style.borderBottomColor = evt.newValue;
+            titleField.style.borderLeftColor = evt.newValue;
+            titleField.style.borderRightColor = evt.newValue;
+
+            columnData.titleBorderColor = evt.newValue; // Save the new color to the ScriptableObject
+            DebounceUtility.Debounce(() =>
+            {
+                MarkDirtyAndSave();
+            }, .5f);
+        });
+
+        // Now checks for tasks that should be within these columns
+        VisualElement taskBox = taskColumnElement.Q<VisualElement>("TaskBox");
+        foreach (var task in columnData.tasks)
+        {
+            var taskCard = LoadSavedTaskData(task, taskBox);
+            taskBox.Add(taskCard);
+        }
+
+        columnContainer.Add(taskColumnElement);
+    }
+
+    private VisualElement LoadSavedTaskData(TaskData taskData, VisualElement taskContainer)
     {
         // Loading individual cards into UXML depending on how many tasks exist
+        var taskCardTemplate = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>("Assets/KanbanBoard_Tool/Window_UI/TaskCard.uxml");
+        var taskCard = taskCardTemplate.Instantiate();
+
+        taskCard.userData = taskData;
 
         TextField taskText = taskCard.Q<TextField>("TaskText");
-        EnumField stateDropdown = taskCard.Q<EnumField>("TaskState");
         ColorField taskColour = taskCard.Q<ColorField>("TaskColor");
+        EnumField stateDropdown = taskCard.Q<EnumField>("TaskState");
+        stateDropdown.Init(KanbanTaskState.Unassigned); // Set the initial value of the dropdown
+        stateDropdown.value = taskData.taskState; // Set the initial value of the dropdown to the task's state
 
-        // Initializing the TaskText and Colour
-        taskText.value = task.taskText;
-        taskColour.value = task.taskColour;
-
-        // Initialize the dropdown with this state as a default
-        stateDropdown.value = task.taskState;
-        stateDropdown.Init(KanbanTaskState.BoardEditor);
-
+        // Initializing the TaskText Colour and State
+        taskText.value = taskData.taskText;
+        taskColour.value = taskData.taskColour;
+        stateDropdown.value = taskData.taskState;
+       
         // Register callbacks for updating the task data (task, state, colour)
-        taskText.RegisterValueChangedCallback(evt => DebounceAndRefresh(() => task.taskText = evt.newValue, taskCard, task));
-        taskColour.RegisterValueChangedCallback(evt => DebounceAndRefresh(() => task.taskColour = evt.newValue, taskCard, task));
-        stateDropdown.RegisterValueChangedCallback(evt =>
-        {
-            DebounceAndRefresh(() => task.taskState = (KanbanTaskState)evt.newValue, taskCard, task);
-            MoveTaskCard(taskCard, task);
-        });
+        taskText.RegisterValueChangedCallback(evt => DebounceAndSaveTaskCards(() => taskData.taskText = evt.newValue, taskCard, taskData));
+        taskColour.RegisterValueChangedCallback(evt => DebounceAndSaveTaskCards(() => taskData.taskColour = evt.newValue, taskCard, taskData));
+        stateDropdown.RegisterValueChangedCallback(evt => DebounceAndSaveTaskCards(() => taskData.taskState = (KanbanTaskState)evt.newValue, taskCard, taskData));
 
         // Register callbacks for drag and drop
         taskCard.RegisterCallback<PointerDownEvent>(evt => OnTaskPointerDown(evt, taskCard));
         taskCard.RegisterCallback<PointerMoveEvent>(evt => OnTaskPointerMove(evt, taskCard));
-        taskCard.RegisterCallback<PointerUpEvent>(evt => OnTaskPointerUp(evt, taskCard));
+        taskCard.RegisterCallback<PointerUpEvent>(evt => OnTaskPointerRelease(evt, taskCard));
 
         return taskCard;
     }
 
-    private void MoveTaskCard(VisualElement taskCard, KanbanTask task)
-    {
-        //remove the task card from its current parent
-        taskCard.RemoveFromHierarchy();
+    // Variables to handle dragging and dropping
+    private VisualElement draggedTaskCard;
+    private Vector2 dragOffset;
 
-        // Relocating task cards on state change
-        VisualElement newParent = null;
-        switch (task.taskState)
-        {
-            case KanbanTaskState.ToDo:
-                newParent = rootVisualElement.Q<VisualElement>("Column1");
-                break;
-            case KanbanTaskState.InProgress:
-                newParent = rootVisualElement.Q<VisualElement>("Column2");
-                break;
-            case KanbanTaskState.ToPolish:
-                newParent = rootVisualElement.Q<VisualElement>("Column3");
-                break;
-            case KanbanTaskState.Finished:
-                newParent = rootVisualElement.Q<VisualElement>("Column4");
-                break;
-            case KanbanTaskState.BoardEditor:
-                newParent = rootVisualElement.Q<VisualElement>("NewTaskBox");
-                break;
-
-            default:
-                Debug.LogWarning("Invalid task state.");
-                break;
-        }
-
-        newParent.Add(taskCard);
-        MarkDirtyAndSave();
-    }
-
-    //private void UpdateTaskCard(VisualElement taskCard, KanbanTask task)
-    //{
-    //    //ColorField taskColorField = taskCard.Q<ColorField>("TaskColor");
-    //    //TextField taskText = taskCard.Q<TextField>("TaskText");
-    //    EnumField stateDropdown = taskCard.Q<EnumField>("TaskState");
-
-    //    //taskColorField.value = task.taskColour;
-    //    //taskText.value = task.taskText;
-    //    stateDropdown.value = task.taskState;
-    //}
+    private VisualElement originalParent;
+    private Vector2 originalPosition;
 
     private void OnTaskPointerDown(PointerDownEvent evt, VisualElement taskCard)
     {
-        // Implement logic for dragging the task card
-        Debug.Log("Task card clicked");
+        taskCard.CaptureMouse(); // Capture mouse events for the task card
 
-        // Set task card as drag object and call OntaskPointerMove when taskCard exists and mouse down
+        draggedTaskCard = taskCard;
+        dragOffset = evt.localPosition;
+
+        originalParent = taskCard.parent; // To reset to original parent
+        originalPosition = new Vector2(taskCard.resolvedStyle.left, taskCard.resolvedStyle.top); // To reset to original pos
     }
 
     private void OnTaskPointerMove(PointerMoveEvent evt, VisualElement taskCard)
     {
-        //implement logic for moving the task card
-        Debug.Log("Task card is moving");
+        if (draggedTaskCard != null && taskCard.HasMouseCapture()) // checking if taskcard is captured by mouse on TaskPointerDown
+        {
+            Vector2 newCardGlobalPosition = (Vector2)evt.position - dragOffset;
+
+            // converts the global position to the local position within the parent container 
+            // takes the mouse pos relative to the entire window (above) and converts to local Element Pos
+            Vector2 newCardLocalPosition = taskCard.parent.WorldToLocal(newCardGlobalPosition);
+
+            rootVisualElement.Add(taskCard); // making the root element while dragging fixes card positioning issues
+
+            // Update card's position (the -15 corrects the position of the card relative to the mouse a bit)
+            taskCard.style.left = newCardLocalPosition.x - 5f;
+            taskCard.style.top = newCardLocalPosition.y;
+        }
     }
 
-    private void OnTaskPointerUp(PointerUpEvent evt, VisualElement taskCard)
+    private void OnTaskPointerRelease(PointerUpEvent evt, VisualElement taskCard)
     {
-        //implement logic for dropping the task card
-        Debug.Log("Task card dropped");
+        if (draggedTaskCard != null && taskCard.HasMouseCapture())
+        {
+            taskCard.ReleaseMouse();
+
+            VisualElement newParentTaskBox = null;
+            int newParentColumnIndex = -1;
+
+            var columnContainer = rootVisualElement.Q<VisualElement>("ColumnContainer");
+            foreach (var column in columnContainer.Children())
+            {
+                if (column.worldBound.Contains(evt.position))
+                {
+                    VisualElement taskBox = column.Q<VisualElement>("TaskBox");
+
+                    if (taskBox.childCount >= 10)
+                    {
+                        Debug.Log("Sorry, that column is full"); // Check if the column is full
+                        originalParent.Add(taskCard); // Reset to original parent if column is full
+                        taskCard.style.left = originalPosition.x;
+                        taskCard.style.top = originalPosition.y;
+                        return;
+                    }
+                    else
+                    {
+                        newParentTaskBox = column.Q<VisualElement>("TaskBox");
+                        newParentColumnIndex = columnContainer.IndexOf(column);
+                        break;
+                    }
+                }
+            }
+
+            // Dropped into a column
+            if (newParentTaskBox != null && newParentColumnIndex != -1)
+            {
+                var taskData = taskCard.userData as TaskData;
+
+                // Remove from unassigned if present
+                kanbanData.UnassignedTaskBox.Remove(taskData);
+
+                // Remove from all columns (in case it was moved from another column)
+                foreach (var columnData in kanbanData.Columns)
+                {
+                    columnData.tasks.Remove(taskData);
+                }
+
+                kanbanData.Columns[newParentColumnIndex].tasks.Add(taskData);
+                taskData.parentColumnIndex = newParentColumnIndex; // Update the parent column index
+
+                newParentTaskBox.Add(taskCard); // Add the task card to the new parent task box
+
+                // Reset card position so they sit in columns correctly
+                taskCard.style.left = 0;
+                taskCard.style.top = 0;
+
+                MarkDirtyAndSave();
+            }
+
+            else // Checking if dropped in the BoardEditor
+            {
+                VisualElement boardEditor = rootVisualElement.Q<VisualElement>("BoardEditor"); // Allows the taskCard to be dropped in the BoardEditor
+                VisualElement boardEditorBox = rootVisualElement.Q<VisualElement>("BoardEditorBox"); // Which then slots into the NewTaskBox
+
+                if (boardEditor.worldBound.Contains(evt.position))
+                {
+                    newParentTaskBox = boardEditorBox;
+
+                    var taskData = taskCard.userData as TaskData;
+
+                    foreach (var columnData in kanbanData.Columns)
+                    {
+                        columnData.tasks.Remove(taskData);
+                    }
+
+                    if (kanbanData.UnassignedTaskBox.Count == 0 || kanbanData.UnassignedTaskBox.Contains(taskData))
+                    {
+                        if (!kanbanData.UnassignedTaskBox.Contains(taskData))
+                            kanbanData.UnassignedTaskBox.Add(taskData);
+
+                        taskData.parentColumnIndex = -1; // Reset the parent column index
+
+                        boardEditorBox.Add(taskCard); // Add the task card to the BoardEditor
+
+                        taskCard.style.left = 0; // Reset the left position
+                        taskCard.style.top = 0; // Reset the top position
+
+                        MarkDirtyAndSave();
+                    }
+                    else
+                    {
+                        // Already an unassigned task; snap back to original parent
+                        originalParent.Add(taskCard);
+                        taskCard.style.left = originalPosition.x;
+                        taskCard.style.top = originalPosition.y;
+                    }
+                }
+                else // Not dropped in a valid area; reset to original parent
+                {
+                    originalParent.Add(taskCard);
+                    taskCard.style.left = originalPosition.x;
+                    taskCard.style.top = originalPosition.y;
+                }
+            }
+
+            draggedTaskCard = null; // Reset the dragged task card
+        }
     }
 
-    private void DebounceAndRefresh(Action updateAction, VisualElement taskcard, KanbanTask task)
+    //private void ApplyVisualOnState(VisualElement taskCard)
+    //{
+    //    //apply visual changes based on the task state
+
+    //    switch ()
+    //    {
+    //        case KanbanTaskState.Working:
+    //            taskCard.style.backgroundColor = new Color(0.5f, 0.5f, 1f); // blue
+    //            break;
+    //        case KanbanTaskState.Bugged:
+    //            taskCard.style.backgroundColor = new Color(1f, 0.5f, 0.5f); // red
+    //            break;
+    //    }
+    //}
+
+    private void DebounceAndSaveColumnTitles(Action updateAction, TextField columnTitle)
     {
         updateAction.Invoke();
         DebounceUtility.Debounce(() =>
         {
-            //UpdateTaskCard(taskcard, task);
             MarkDirtyAndSave();
         }, .5f);
     }
 
-    // Refresh the window to update the changes
-    private void RefreshWindow()
+    private void DebounceAndSaveTaskCards(Action updateAction, VisualElement taskcard, TaskData taskData)
     {
-        //rootVisualElement.Clear();
-
-        //This is trying to regenerate a new window for each key pressed(e.g. when 4 keys are pressed it tries to generate 4 new windows)
-        //GenerateWindowUI();
+        updateAction.Invoke();
+        DebounceUtility.Debounce(() =>
+        {
+            MarkDirtyAndSave();
+        }, .5f);
     }
 }

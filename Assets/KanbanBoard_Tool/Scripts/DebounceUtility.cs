@@ -4,25 +4,24 @@ using UnityEngine;
 
 public class DebounceUtility
 {
-    private static Action _debouncedAction;
-    private static float _debounceTime;
-    private static float _lastActionTime;
+    private static Action debouncedAction;
+    private static float debounceTime;
+    private static float lastActionTime;
 
-    // Debounce the action (Refresh UI) for the set time
     public static void Debounce(Action action, float debounceTime)
     {
-        _debouncedAction = action;
-        _debounceTime = debounceTime;
-        _lastActionTime = Time.realtimeSinceStartup;
+        debouncedAction = action;
+        DebounceUtility.debounceTime = debounceTime;
+        lastActionTime = Time.realtimeSinceStartup;
 
         EditorApplication.update += FixedUpdate;
     }
     
     public static void FixedUpdate()
     {
-        if (Time.realtimeSinceStartup - _lastActionTime >= _debounceTime)
+        if (Time.realtimeSinceStartup - lastActionTime >= debounceTime)
         {
-            _debouncedAction?.Invoke();
+            debouncedAction?.Invoke();
             EditorApplication.update -= FixedUpdate;
         }
     }
