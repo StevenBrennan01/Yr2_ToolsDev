@@ -27,4 +27,4 @@ MonoBehaviour:
     tasks: []
   UnassignedTaskBox: []
   sliderValue: 0
-  dueDate: 
+  dueDate: DD/MM/YYYY
