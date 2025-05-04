@@ -64,3 +64,23 @@
     border-bottom-right-radius: 5px;
     border-bottom-left-radius: 5px;
 }
+
+.resetDataButton:hover {
+    scale: 1.1 1.1;
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+    border-bottom-right-radius: 5px;
+    border-bottom-left-radius: 5px;
+    border-top-width: 1px;
+    border-right-width: 1px;
+    border-bottom-width: 1px;
+    border-left-width: 1px;
+    border-left-color: rgb(255, 0, 0);
+    border-right-color: rgb(255, 0, 0);
+    border-top-color: rgb(255, 0, 0);
+    border-bottom-color: rgb(255, 0, 0);
+    transition-duration: 0.2s;
+}
+
+.resetDataButton {
+}
