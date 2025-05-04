@@ -9,14 +9,6 @@ public class KanbanBoardDataManager : ScriptableObject
 
     public int sliderValue;
     public string dueDate = "DD/MM/YYYY";
-
-    public void ResetKanbanData()
-    {
-        Columns.Clear();
-        UnassignedTaskBox.Clear();
-        sliderValue = 0;
-        dueDate = "DD/MM/YYYY";
-    }
 }
 
 [System.Serializable]

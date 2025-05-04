@@ -8,15 +8,14 @@
         <engine:VisualElement name="ColumnContainer" style="flex-grow: 1; flex-direction: row; justify-content: flex-start; padding-top: 15px; padding-right: 15px; padding-bottom: 15px; padding-left: 15px; opacity: 1; translate: 255px 80px; width: 1819px; height: 859px; align-items: flex-end; align-self: auto; position: absolute; top: 39px;" />
         <engine:VisualElement name="BoardEditor" style="flex-grow: 1; width: 241px; translate: 20px 160px; background-color: rgb(46, 46, 46); border-left-color: rgb(0, 0, 0); border-right-color: rgb(0, 0, 0); border-top-color: rgb(0, 0, 0); border-bottom-color: rgb(0, 0, 0); border-top-width: 2px; border-right-width: 2px; border-bottom-width: 2px; border-left-width: 2px; position: absolute; height: 392px; border-top-left-radius: 10px; border-top-right-radius: 10px; border-bottom-right-radius: 10px; border-bottom-left-radius: 10px;">
             <engine:Label text="Board Editor" name="BoardEditorTitle" style="width: 123px; translate: 57px 0; -unity-font-style: bold-and-italic; font-size: 20px; opacity: 1; -unity-text-align: upper-center;" />
-            <engine:Button text="Reset Data" name="ResetDataButton" class="resetDataButton" style="-unity-font-style: bold; width: 90px; translate: 70px 34px; position: absolute;" />
-            <engine:Label text="Due Date:" name="DueDateText" style="width: 58px; position: absolute; translate: 36px 67px; -unity-font-style: bold;" />
-            <engine:TextField placeholder-text="DD/MM/YYYY" name="DueDateField" style="width: 86px; align-items: center; justify-content: center; align-self: flex-end; translate: -40px 41px;" />
+            <engine:Label text="Due Date:" name="DueDateText" style="width: 58px; position: absolute; translate: 36px 51px; -unity-font-style: bold;" />
+            <engine:TextField placeholder-text="DD/MM/YYYY" name="DueDateField" style="width: 86px; align-items: center; justify-content: center; align-self: flex-end; translate: -40px 24px;" />
             <engine:Label text="Add Extra Task Columns" name="SliderText" style="-unity-text-align: upper-center; border-top-width: 1px; border-right-width: 1px; border-bottom-width: 1px; border-left-width: 1px; translate: 0 130px; -unity-font-style: bold;">
                 <engine:SliderInt value="-1" high-value="3" name="ExtraColumnSlider" fill="false" show-input-field="false" inverted="false" style="-unity-font-style: bold; translate: 0 15px;" />
             </engine:Label>
             <engine:VisualElement name="ButtonContainer" style="flex-grow: 1; max-height: 55px; height: 59px; translate: 0 160px; width: 237px; align-items: stretch;">
-                <engine:Button text="Add Task" name="AddTaskButton" class="button" style="-unity-font-style: bold;" />
-                <engine:Button text="Delete Task" name="DeleteTaskButton" class="button" style="-unity-font-style: bold;" />
+                <engine:Button text="Add Task" name="AddTaskButton" class="button" />
+                <engine:Button text="Delete Task" name="DeleteTaskButton" class="button" />
             </engine:VisualElement>
             <engine:Label text="(Drag task back here to delete)" name="TextUnderButtons" style="position: relative; translate: 47.5px 165px; width: 147px; font-size: 10px; -unity-text-align: upper-center;" />
             <engine:VisualElement name="BoardEditorBox" style="flex-grow: 1; translate: 10px 172px; max-height: 95px; align-items: stretch; height: 104px; align-self: center; width: 232px;" />
