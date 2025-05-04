@@ -81,6 +81,8 @@ public class KanbanBoardEditorWindow : EditorWindow
         Button addTaskButton = rootVisualElement.Q<Button>("AddTaskButton");
         Button deleteTaskButton = rootVisualElement.Q<Button>("DeleteTaskButton");
 
+        Button resetDataButton = rootVisualElement.Q<Button>("ResetDataButton");
+
         VisualElement columnContainer = rootVisualElement.Q<VisualElement>("ColumnContainer");
         VisualElement boardEditorBox = rootVisualElement.Q<VisualElement>("BoardEditorBox");
 
@@ -200,7 +202,7 @@ public class KanbanBoardEditorWindow : EditorWindow
         });
         #endregion
 
-        #region Add and Delete Task Buttons
+        #region Add/Delete Task Buttons + Reset Board Button
 
         // Button for adding new task into the BoardEditor
         addTaskButton.RegisterCallback<ClickEvent>(evt =>
@@ -210,8 +212,6 @@ public class KanbanBoardEditorWindow : EditorWindow
                 Debug.LogWarning("An unassigned Task already exists in the Board Editor");
                 return;
             }
-
-           // int boardEditorBoxIndex = -1;
 
             TaskData newTask = new TaskData
             {
@@ -239,6 +239,32 @@ public class KanbanBoardEditorWindow : EditorWindow
                 boardEditorBox.Clear();
                 MarkDirtyAndSave();
             }
+        });
+
+        //Button for RESETTING ALL DATA
+        resetDataButton.RegisterCallback<ClickEvent>(evt =>
+        {
+            kanbanData.ResetKanbanData();
+
+            while (kanbanData.Columns.Count < initialColumnCount)
+            {
+                int columnIndex = kanbanData.Columns.Count;
+                kanbanData.Columns.Add(new ColumnData { columnTitle = $"Edit Column Title: {columnIndex + 1}" });
+            }
+
+            columnContainer.Clear();
+            boardEditorBox.Clear();
+            extraColumnSlider.value = 0;
+
+            foreach (var columnData in kanbanData.Columns)
+            {
+                LoadSavedColumnData(columnData);
+
+                var columnIndex = kanbanData.Columns.IndexOf(columnData);
+                var taskContainer = columnContainer.Children().ElementAt(columnIndex).Q<VisualElement>("TaskBox");
+            }
+
+            MarkDirtyAndSave();
         });
         #endregion
     }
