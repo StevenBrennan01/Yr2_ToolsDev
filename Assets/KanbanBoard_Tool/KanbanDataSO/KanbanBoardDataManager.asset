@@ -15,15 +15,7 @@ MonoBehaviour:
   Columns:
   - columnTitle: 'Edit Column Title: 1'
     titleBorderColor: {r: 1, g: 0.37254903, b: 0, a: 1}
-    tasks:
-    - taskText: 'Edit Task Description:'
-      taskColour: {r: 0, g: 0.7137255, b: 1, a: 1}
-      taskState: 0
-      parentColumnIndex: 0
-    - taskText: 'Edit Task Description:'
-      taskColour: {r: 0, g: 0.7137255, b: 1, a: 1}
-      taskState: 0
-      parentColumnIndex: 0
+    tasks: []
   - columnTitle: 'Edit Column Title: 2'
     titleBorderColor: {r: 1, g: 0.37254903, b: 0, a: 1}
     tasks: []
