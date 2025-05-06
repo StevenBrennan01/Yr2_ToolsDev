@@ -216,7 +216,7 @@ public class KanbanBoardEditorWindow : EditorWindow
             TaskData newTask = new TaskData
             {
                 taskText = "Edit Task Description:",
-                taskColour = new Color(255f / 255f, 95f / 255f, 0f / 225f, 1),
+                taskColour = new Color(0f/255f, 182f/255f, 255f/255f, 1),
                 taskState = KanbanTaskState.Unassigned,
                 parentColumnIndex = -1 // -1 means not within a standard column
             };
@@ -279,7 +279,7 @@ public class KanbanBoardEditorWindow : EditorWindow
             TextField existingTitleField = child.Q<TextField>("ColumnTitle");
             if (existingTitleField != null && existingTitleField.value == columnData.columnTitle)
             {
-                //Debug.LogWarning($"Column with title '{columnData.columnTitle}' already exists in the UI.");
+                Debug.LogWarning($"Column with title '{columnData.columnTitle}' already exists in the UI.");
                 return; // Prevent duplicate instantiation
             }
         }

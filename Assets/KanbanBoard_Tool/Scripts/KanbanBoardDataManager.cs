@@ -31,7 +31,7 @@ public class TaskData
 public class ColumnData
 {
     public string columnTitle;
-    public Color titleBorderColor = new Color(255f/255f, 95f/255f, 0f/225f, 1);
+    public Color titleBorderColor = new Color(255f/255f, 95f/255f, 0f/255f, 1);
     public List<TaskData> tasks = new List<TaskData>();
 }
 
