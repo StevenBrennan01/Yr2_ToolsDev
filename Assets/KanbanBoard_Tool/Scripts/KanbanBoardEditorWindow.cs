@@ -9,7 +9,7 @@ public class KanbanBoardEditorWindow : EditorWindow
 {
     private KanbanBoardDataManager kanbanData;
 
-    [MenuItem("My Tools/Custom Kanban Board")]
+    [MenuItem("Kanban Tool/Custom Kanban Board")]
     public static void OpenWindow()
     {
         var window = GetWindow<KanbanBoardEditorWindow>("Kanban Board");
