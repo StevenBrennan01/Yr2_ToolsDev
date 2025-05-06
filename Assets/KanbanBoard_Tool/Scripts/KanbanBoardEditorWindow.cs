@@ -209,16 +209,16 @@ public class KanbanBoardEditorWindow : EditorWindow
         {
             if (kanbanData.UnassignedTaskBox.Count > 0) // Only allowing one at a time
             {
-                Debug.LogWarning("An unassigned Task already exists in the Board Editor");
+                Debug.Log("An unassigned Task already exists in the Board Editor");
                 return;
             }
 
             TaskData newTask = new TaskData
             {
                 taskText = "Edit Task Description:",
-                taskColour = Color.red,
+                taskColour = new Color(255f / 255f, 95f / 255f, 0f / 225f, 1),
                 taskState = KanbanTaskState.Unassigned,
-                parentColumnIndex = -1 // -1 means not in a column
+                parentColumnIndex = -1 // -1 means not within a standard column
             };
 
             kanbanData.UnassignedTaskBox.Add(newTask);

@@ -15,7 +15,7 @@
                 <engine:SliderInt value="-1" high-value="3" name="ExtraColumnSlider" fill="false" show-input-field="false" inverted="false" style="-unity-font-style: bold; translate: 0 15px;" />
             </engine:Label>
             <engine:VisualElement name="ButtonContainer" style="flex-grow: 1; max-height: 55px; height: 59px; translate: 0 160px; width: 237px; align-items: stretch;">
-                <engine:Button text="Add Task" name="AddTaskButton" class="button" style="-unity-font-style: bold;" />
+                <engine:Button text="Add New Task" name="AddTaskButton" class="button" style="-unity-font-style: bold;" />
                 <engine:Button text="Delete Task" name="DeleteTaskButton" class="button" style="-unity-font-style: bold;" />
             </engine:VisualElement>
             <engine:Label text="(Drag task back here to delete)" name="TextUnderButtons" style="position: relative; translate: 47.5px 165px; width: 147px; font-size: 10px; -unity-text-align: upper-center;" />
