@@ -111,7 +111,7 @@ public class KanbanBoardEditorWindow : EditorWindow
             dueDate.SetValueWithoutNotify(dateInput); // Update the field without triggering the callback
 
             // Set/Bump forward the caret position because it isn't
-            // updating programmatically whilst the date is being formatted
+            // updating programmatically as the date is being formatted
             if (caretPosition == 2 || caretPosition == 5)
             {
                 caretPosition++;
@@ -447,8 +447,8 @@ public class KanbanBoardEditorWindow : EditorWindow
                 newParentTaskBox.Add(taskCard); // Add the task card to the new parent task box
 
                 // Reset card position so they sit in columns correctly
-                taskCard.style.left = 0;
-                taskCard.style.top = 0;
+
+                ResetCardPosition(taskCard);
 
                 MarkDirtyAndSave();
             }
@@ -478,8 +478,7 @@ public class KanbanBoardEditorWindow : EditorWindow
 
                         boardEditorBox.Add(taskCard); // Add the task card to the BoardEditor
 
-                        taskCard.style.left = 0; // Reset the left position
-                        taskCard.style.top = 0; // Reset the top position
+                        ResetCardPosition(taskCard);
 
                         MarkDirtyAndSave();
                     }
@@ -494,13 +493,18 @@ public class KanbanBoardEditorWindow : EditorWindow
                 else // Not dropped in a valid area; reset to original parent
                 {
                     originalParent.Add(taskCard);
-                    taskCard.style.left = originalPosition.x;
-                    taskCard.style.top = originalPosition.y;
+                    ResetCardPosition(taskCard); // Reset the position to original
                 }
             }
 
             draggedTaskCard = null; // Reset the dragged task card
         }
+    }
+
+    void ResetCardPosition(VisualElement taskCard)
+    {
+        taskCard.style.left = 0;
+        taskCard.style.top = 0;
     }
 
     //private void ApplyVisualOnState(VisualElement taskCard)
