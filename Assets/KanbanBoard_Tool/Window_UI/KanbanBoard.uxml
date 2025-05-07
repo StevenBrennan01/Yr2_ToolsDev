@@ -16,7 +16,7 @@
             <engine:TextField placeholder-text="DD/MM/YYYY" name="DueDateField" style="width: 86px; align-items: center; justify-content: center; align-self: flex-end; translate: -40px 34px;" />
             <engine:VisualElement name="BackgroundContainer" style="flex-grow: 1; position: absolute; height: 29px; width: 236px; top: 102px; translate: -42px -14px; left: 34px;">
                 <engine:Label text="Select Background:" name="Text" style="position: absolute; translate: 26px 5px; -unity-font-style: bold; color: rgb(255, 255, 255);" />
-                <engine:DropdownField name="BackgroundDropdown" style="position: absolute; translate: 142px 4px; width: 85px;" />
+                <engine:DropdownField name="BackgroundDropdown" class="bgDropdown" style="position: absolute; translate: 142px 4px; width: 85px;" />
             </engine:VisualElement>
             <engine:Label text="Add Extra Task Columns" name="SliderText" style="-unity-text-align: upper-center; border-top-width: 1px; border-right-width: 1px; border-bottom-width: 1px; border-left-width: 1px; translate: 0 130px; -unity-font-style: bold; color: rgb(255, 255, 255);">
                 <engine:SliderInt value="-1" high-value="3" name="ExtraColumnSlider" fill="false" show-input-field="false" inverted="false" style="-unity-font-style: bold; translate: 0 15px;" />
