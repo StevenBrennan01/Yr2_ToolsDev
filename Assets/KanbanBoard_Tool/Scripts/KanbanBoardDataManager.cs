@@ -4,17 +4,22 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "KanbanBoardDataManager", menuName = "My Tools/Kanban Board Data Manager")]
 public class KanbanBoardDataManager : ScriptableObject
 {
-    public List<ColumnData> Columns = new List<ColumnData>();
-    public List<TaskData> UnassignedTaskBox = new List<TaskData>();
+    public List<ColumnData> columns = new List<ColumnData>();
+    public List<TaskData> unassignedTaskBox = new List<TaskData>();
+    public List<string> backgroundList = new List<string> { "None", "Cityscape", "Waterfall", "Ravine" };
+    public string selectedBackground = "None";
 
     public int sliderValue;
     public string dueDate = "DD/MM/YYYY";
+    public string projectTitle = "Edit Project Title:";
     public void ResetKanbanData()
     {
-        Columns.Clear();
-        UnassignedTaskBox.Clear();
+        columns.Clear();
+        unassignedTaskBox.Clear();
         sliderValue = 0;
         dueDate = "DD/MM/YYYY";
+        projectTitle = "Edit Project Title:";
+        selectedBackground = "None";
     }
 }
 
@@ -31,7 +36,7 @@ public class TaskData
 public class ColumnData
 {
     public string columnTitle;
-    public Color titleBorderColor = new Color(255f/255f, 95f/255f, 0f/255f, 1);
+    public Color titleBorderColor = new Color(255f/255f, 255f/255f, 255f/255f, 1);
     public List<TaskData> tasks = new List<TaskData>();
 }
 
