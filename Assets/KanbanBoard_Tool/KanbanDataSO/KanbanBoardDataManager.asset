@@ -25,19 +25,13 @@ MonoBehaviour:
   - columnTitle: 'Edit Column Title: 4'
     titleBorderColor: {r: 1, g: 1, b: 1, a: 1}
     tasks: []
-  - columnTitle: 'Edit Column Title: 5'
-    titleBorderColor: {r: 1, g: 1, b: 1, a: 1}
-    tasks: []
-  - columnTitle: 'Edit Column Title: 6'
-    titleBorderColor: {r: 1, g: 1, b: 1, a: 1}
-    tasks: []
   unassignedTaskBox: []
   backgroundList:
   - None
   - Cityscape
   - Waterfall
   - Ravine
-  selectedBackground: Ravine
-  sliderValue: 2
+  selectedBackground: None
+  sliderValue: 0
   dueDate: DD/MM/YYYY
   projectTitle: 'Edit Project Title:'
