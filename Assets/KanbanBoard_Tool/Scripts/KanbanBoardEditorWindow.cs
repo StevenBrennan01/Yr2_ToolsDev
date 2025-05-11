@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using UnityEditor;
 using UnityEditor.UIElements;
 using UnityEngine;
@@ -85,6 +86,8 @@ public class KanbanBoardEditorWindow : EditorWindow
         VisualElement columnContainer = rootVisualElement.Q<VisualElement>("ColumnContainer");
         VisualElement boardEditorBox = rootVisualElement.Q<VisualElement>("BoardEditorBox");
         VisualElement kanbanContainer = rootVisualElement.Q<VisualElement>("KanbanContainer");
+
+        Label debugBox = rootVisualElement.Q<Label>("DebugText");
 
         SliderInt extraColumnSlider = rootVisualElement.Q<SliderInt>("ExtraColumnSlider");
 
@@ -254,7 +257,7 @@ public class KanbanBoardEditorWindow : EditorWindow
         {
             if (kanbanData.unassignedTaskBox.Count > 0) // Only allowing one at a time
             {
-                Debug.Log("An unassigned Task already exists in the Board Editor");
+                DisplayDebugMessage("There is already a task below. Please move it before adding a new one.", 5f);
                 return;
             }
 
@@ -315,6 +318,32 @@ public class KanbanBoardEditorWindow : EditorWindow
             MarkDirtyAndSave();
         });
         #endregion
+    }
+    private double debugMessageHideTime = 0;
+    private bool debugMessageVisible = false;
+    private void DisplayDebugMessage(string message, float duration = 5f)
+    {
+        var debugBox = rootVisualElement.Q<Label>("DebugText");
+        debugBox.text = message;
+        debugBox.style.display = DisplayStyle.Flex;
+
+        debugMessageHideTime = EditorApplication.timeSinceStartup + duration;
+        if (!debugMessageVisible)
+        {
+            EditorApplication.update += DebugBoxUpdate;
+            debugMessageVisible = true;
+        }
+    }
+
+    private void DebugBoxUpdate() // Used to get the time since startup and hide the message after a duration
+    {
+        if (EditorApplication.timeSinceStartup >= debugMessageHideTime)
+        {
+            var debugBox = rootVisualElement.Q<Label>("DebugText");
+            debugBox.style.display = DisplayStyle.None;
+            EditorApplication.update -= DebugBoxUpdate;
+            debugMessageVisible = false;
+        }
     }
 
     private void LoadSavedColumnData(ColumnData columnData)
@@ -459,7 +488,7 @@ public class KanbanBoardEditorWindow : EditorWindow
 
                     if (taskBox.childCount >= 10)
                     {
-                        Debug.Log("Sorry, that column is full"); // Check if the column is full
+                        DisplayDebugMessage("This column is full, please drop in another column or the Board Editor.", 5f); // Display message if column is full
                         originalParent.Add(taskCard); // Reset to original parent if column is full
                         taskCard.style.left = originalPosition.x;
                         taskCard.style.top = originalPosition.y;

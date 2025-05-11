@@ -24,8 +24,12 @@ MonoBehaviour:
       taskColour: {r: 1, g: 0, b: 0, a: 1}
       taskState: 2
       parentColumnIndex: 0
+    - taskText: 'Edit Task Description:'
+      taskColour: {r: 1, g: 0, b: 0, a: 1}
+      taskState: 0
+      parentColumnIndex: 0
   - columnTitle: 'Tasks To Start:'
-    titleBorderColor: {r: 1, g: 0.44493103, b: 0, a: 1}
+    titleBorderColor: {r: 1, g: 0.4431373, b: 0, a: 1}
     tasks:
     - taskText: 
       taskColour: {r: 1, g: 0.4431373, b: 0, a: 1}
@@ -37,11 +41,11 @@ MonoBehaviour:
       parentColumnIndex: 1
     - taskText: 
       taskColour: {r: 1, g: 0.4431373, b: 0, a: 1}
-      taskState: 7
+      taskState: 6
       parentColumnIndex: 1
     - taskText: 
       taskColour: {r: 1, g: 0.4431373, b: 0, a: 1}
-      taskState: 6
+      taskState: 7
       parentColumnIndex: 1
   - columnTitle: Tasks to Polish
     titleBorderColor: {r: 1, g: 0.81539816, b: 0, a: 1}
@@ -95,11 +99,7 @@ MonoBehaviour:
       taskColour: {r: 1, g: 1, b: 1, a: 1}
       taskState: 0
       parentColumnIndex: 5
-  unassignedTaskBox:
-  - taskText: 'Edit Task Description:'
-    taskColour: {r: 0, g: 0.7137255, b: 1, a: 1}
-    taskState: 0
-    parentColumnIndex: -1
+  unassignedTaskBox: []
   backgroundList:
   - None
   - Cityscape
