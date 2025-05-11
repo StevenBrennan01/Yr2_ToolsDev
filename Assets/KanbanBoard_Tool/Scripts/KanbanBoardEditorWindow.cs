@@ -574,6 +574,21 @@ public class KanbanBoardEditorWindow : EditorWindow
         }
     }
 
+    //private void ApplyVisualOnState(VisualElement taskCard)
+    //{
+    //    //apply visual changes based on the task state
+
+    //    switch ()
+    //    {
+    //        case KanbanTaskState.Working:
+    //            taskCard.style.backgroundColor = new Color(0.5f, 0.5f, 1f); // blue
+    //            break;
+    //        case KanbanTaskState.Bugged:
+    //            taskCard.style.backgroundColor = new Color(1f, 0.5f, 0.5f); // red
+    //            break;
+    //    }
+    //}
+
     void ResetCardPosition(VisualElement taskCard)
     {
         taskCard.style.left = 0;
