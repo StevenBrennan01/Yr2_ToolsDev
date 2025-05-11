@@ -1,6 +1,5 @@
 using System;
 using System.Linq;
-using System.Runtime.CompilerServices;
 using UnityEditor;
 using UnityEditor.UIElements;
 using UnityEngine;
@@ -87,8 +86,6 @@ public class KanbanBoardEditorWindow : EditorWindow
         VisualElement boardEditorBox = rootVisualElement.Q<VisualElement>("BoardEditorBox");
         VisualElement kanbanContainer = rootVisualElement.Q<VisualElement>("KanbanContainer");
 
-        Label debugBox = rootVisualElement.Q<Label>("DebugText");
-
         SliderInt extraColumnSlider = rootVisualElement.Q<SliderInt>("ExtraColumnSlider");
 
         TextField dueDate = rootVisualElement.Q<TextField>("DueDateField");
@@ -120,7 +117,6 @@ public class KanbanBoardEditorWindow : EditorWindow
 
             if(projectTitle.value.Length == 0)
             {
-                //projectTitle.SetValueWithoutNotify("Edit Project Title:");
                 kanbanData.projectTitle = "Edit Project Title:";
 
                 DebounceUtility.Debounce(() =>
@@ -154,9 +150,9 @@ public class KanbanBoardEditorWindow : EditorWindow
             if (dateInput.Length > 10)
                 dateInput = dateInput.Substring(0, 10); // Limit to 10 characters
 
-            int caretPosition = dueDate.cursorIndex;
-
             dueDate.SetValueWithoutNotify(dateInput); // Update the field without triggering the callback
+
+            int caretPosition = dueDate.cursorIndex;
 
             // Set/Bump forward the caret position because it isn't
             // updating programmatically as the date is being formatted
@@ -164,6 +160,7 @@ public class KanbanBoardEditorWindow : EditorWindow
             {
                 caretPosition++;
             }
+
             dueDate.cursorIndex = caretPosition;
 
             if (dateInput.Length == 10)
@@ -355,7 +352,7 @@ public class KanbanBoardEditorWindow : EditorWindow
             TextField existingTitleField = child.Q<TextField>("ColumnTitle");
             if (existingTitleField != null && existingTitleField.value == columnData.columnTitle)
             {
-                Debug.LogWarning($"Column with title '{columnData.columnTitle}' already exists in the UI.");
+                DisplayDebugMessage($"Column with title '{columnData.columnTitle}' already exists in the UI.", 5f);
                 return; // Prevent duplicate instantiation
             }
         }
@@ -582,21 +579,6 @@ public class KanbanBoardEditorWindow : EditorWindow
         taskCard.style.left = 0;
         taskCard.style.top = 0;
     }
-
-    //private void ApplyVisualOnState(VisualElement taskCard)
-    //{
-    //    //apply visual changes based on the task state
-
-    //    switch ()
-    //    {
-    //        case KanbanTaskState.Working:
-    //            taskCard.style.backgroundColor = new Color(0.5f, 0.5f, 1f); // blue
-    //            break;
-    //        case KanbanTaskState.Bugged:
-    //            taskCard.style.backgroundColor = new Color(1f, 0.5f, 0.5f); // red
-    //            break;
-    //    }
-    //}
 
     private void DebounceAndSaveColumnTitles(Action updateAction, TextField columnTitle)
     {
