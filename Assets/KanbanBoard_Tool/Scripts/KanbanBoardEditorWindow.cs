@@ -9,7 +9,7 @@ public class KanbanBoardEditorWindow : EditorWindow
 {
     private KanbanBoardDataManager kanbanData;
 
-    [MenuItem("My Tools/Custom Kanban Board")]
+    [MenuItem("Kanban Tool/Custom Kanban Board")]
     public static void OpenWindow()
     {
         var window = GetWindow<KanbanBoardEditorWindow>("Kanban Board");
@@ -80,14 +80,58 @@ public class KanbanBoardEditorWindow : EditorWindow
         // Add/Delete task buttons
         Button addTaskButton = rootVisualElement.Q<Button>("AddTaskButton");
         Button deleteTaskButton = rootVisualElement.Q<Button>("DeleteTaskButton");
-
         Button resetDataButton = rootVisualElement.Q<Button>("ResetDataButton");
 
         VisualElement columnContainer = rootVisualElement.Q<VisualElement>("ColumnContainer");
         VisualElement boardEditorBox = rootVisualElement.Q<VisualElement>("BoardEditorBox");
+        VisualElement kanbanContainer = rootVisualElement.Q<VisualElement>("KanbanContainer");
 
         SliderInt extraColumnSlider = rootVisualElement.Q<SliderInt>("ExtraColumnSlider");
+
         TextField dueDate = rootVisualElement.Q<TextField>("DueDateField");
+        TextField projectTitle = rootVisualElement.Q<TextField>("ProjectTitleField");
+
+        DropdownField backgroundOptions = rootVisualElement.Q<DropdownField>("BackgroundDropdown");
+        var initBackground = EditorGUIUtility.Load($"Assets/KanbanBoard_Tool/Window_UI/Backgrounds/{kanbanData.selectedBackground}.png") as Texture2D;
+        kanbanContainer.style.backgroundImage = new StyleBackground(initBackground);
+
+        // Background Options
+        backgroundOptions.choices = kanbanData.backgroundList;
+        backgroundOptions.value = kanbanData.selectedBackground; // Set the initial value to the first background option
+        backgroundOptions.RegisterValueChangedCallback(evt =>
+        {
+            string selectedBackground = evt.newValue;
+            var bgTexture = EditorGUIUtility.Load($"Assets/KanbanBoard_Tool/Window_UI/Backgrounds/{selectedBackground}.png") as Texture2D;
+            kanbanContainer.style.backgroundImage = new StyleBackground(bgTexture);
+
+            kanbanData.selectedBackground = selectedBackground; // Save the selected background to the ScriptableObject
+
+            MarkDirtyAndSave();
+        });
+
+        // Project Title Setup
+        projectTitle.value = kanbanData.projectTitle;
+        projectTitle.RegisterValueChangedCallback(evt =>
+        {
+            kanbanData.projectTitle = evt.newValue;
+
+            if(projectTitle.value.Length == 0)
+            {
+                kanbanData.projectTitle = "Edit Project Title:";
+
+                DebounceUtility.Debounce(() =>
+                {
+                    MarkDirtyAndSave();
+                }, .5f);
+            }
+            else
+            {
+                DebounceUtility.Debounce(() =>
+                {
+                    MarkDirtyAndSave();
+                }, .5f);
+            }
+        });
 
         // Due Date Setup
         dueDate.value = kanbanData.dueDate;
@@ -106,16 +150,17 @@ public class KanbanBoardEditorWindow : EditorWindow
             if (dateInput.Length > 10)
                 dateInput = dateInput.Substring(0, 10); // Limit to 10 characters
 
-            int caretPosition = dueDate.cursorIndex;
-
             dueDate.SetValueWithoutNotify(dateInput); // Update the field without triggering the callback
 
+            int caretPosition = dueDate.cursorIndex;
+
             // Set/Bump forward the caret position because it isn't
-            // updating programmatically whilst the date is being formatted
+            // updating programmatically as the date is being formatted
             if (caretPosition == 2 || caretPosition == 5)
             {
                 caretPosition++;
             }
+
             dueDate.cursorIndex = caretPosition;
 
             if (dateInput.Length == 10)
@@ -139,23 +184,23 @@ public class KanbanBoardEditorWindow : EditorWindow
         // Column Setup
         int initialColumnCount = 4; // Initial number of columns
 
-        while (kanbanData.Columns.Count < initialColumnCount)
+        while (kanbanData.columns.Count < initialColumnCount)
         {
-            int columnIndex = kanbanData.Columns.Count;
-            kanbanData.Columns.Add(new ColumnData { columnTitle = $"Edit Column Title: {columnIndex + 1}" });
+            int columnIndex = kanbanData.columns.Count;
+            kanbanData.columns.Add(new ColumnData { columnTitle = $"Edit Column Title: {columnIndex + 1}" });
         }
 
-        foreach (var task in kanbanData.UnassignedTaskBox)
+        foreach (var task in kanbanData.unassignedTaskBox)
         {
             var taskCard = LoadSavedTaskData(task, boardEditorBox);
             boardEditorBox.Add(taskCard);
         }
 
-        foreach (var columnData in kanbanData.Columns)
+        foreach (var columnData in kanbanData.columns)
         {
             LoadSavedColumnData(columnData);
 
-            var columnIndex = kanbanData.Columns.IndexOf(columnData);
+            var columnIndex = kanbanData.columns.IndexOf(columnData);
             var taskContainer = columnContainer.Children().ElementAt(columnIndex).Q<VisualElement>("TaskBox");
 
             foreach (var task in columnData.tasks)
@@ -178,20 +223,20 @@ public class KanbanBoardEditorWindow : EditorWindow
 
             kanbanData.sliderValue = sliderValue; // Save slider value to ScriptableObject
 
-            while (kanbanData.Columns.Count < totalColumns)
+            while (kanbanData.columns.Count < totalColumns)
             {
-                int columnIndex = kanbanData.Columns.Count;
+                int columnIndex = kanbanData.columns.Count;
                 var newColumn = new ColumnData { columnTitle = $"Edit Column Title: {columnIndex + 1}" }; // Persist new column title
-                kanbanData.Columns.Add(newColumn);
+                kanbanData.columns.Add(newColumn);
 
                 LoadSavedColumnData(newColumn);
             }
 
-            while (kanbanData.Columns.Count > totalColumns)
+            while (kanbanData.columns.Count > totalColumns)
             {
-                if (kanbanData.Columns.Count <= initialColumnCount) break; // Prevent removing the initial columns
+                if (kanbanData.columns.Count <= initialColumnCount) break; // Prevent removing the initial columns
 
-                kanbanData.Columns.RemoveAt(kanbanData.Columns.Count - 1);
+                kanbanData.columns.RemoveAt(kanbanData.columns.Count - 1);
 
                 VisualElement lastColumn = rootVisualElement.Q<VisualElement>("ColumnContainer").Children().Last();
                 columnContainer.Remove(lastColumn);
@@ -207,21 +252,21 @@ public class KanbanBoardEditorWindow : EditorWindow
         // Button for adding new task into the BoardEditor
         addTaskButton.RegisterCallback<ClickEvent>(evt =>
         {
-            if (kanbanData.UnassignedTaskBox.Count > 0) // Only allowing one at a time
+            if (kanbanData.unassignedTaskBox.Count > 0) // Only allowing one at a time
             {
-                Debug.LogWarning("An unassigned Task already exists in the Board Editor");
+                DisplayDebugMessage("There is already a task below. Please move it before adding a new one.", 5f);
                 return;
             }
 
             TaskData newTask = new TaskData
             {
                 taskText = "Edit Task Description:",
-                taskColour = Color.red,
+                taskColour = new Color(0f/255f, 182f/255f, 255f/255f, 1),
                 taskState = KanbanTaskState.Unassigned,
-                parentColumnIndex = -1 // -1 means not in a column
+                parentColumnIndex = -1 // -1 means not within a standard column
             };
 
-            kanbanData.UnassignedTaskBox.Add(newTask);
+            kanbanData.unassignedTaskBox.Add(newTask);
 
             var taskCard = LoadSavedTaskData(newTask, boardEditorBox);
             boardEditorBox.Add(taskCard);
@@ -233,9 +278,9 @@ public class KanbanBoardEditorWindow : EditorWindow
         // *Maybe try and make it so that the user can delete a selected task in the future*
         deleteTaskButton.RegisterCallback<ClickEvent>(evt =>
         {
-            if (kanbanData.UnassignedTaskBox.Count > 0)
+            if (kanbanData.unassignedTaskBox.Count > 0)
             {
-                kanbanData.UnassignedTaskBox.Clear();
+                kanbanData.unassignedTaskBox.Clear();
                 boardEditorBox.Clear();
                 MarkDirtyAndSave();
             }
@@ -246,28 +291,56 @@ public class KanbanBoardEditorWindow : EditorWindow
         {
             kanbanData.ResetKanbanData();
 
-            while (kanbanData.Columns.Count < initialColumnCount)
+            while (kanbanData.columns.Count < initialColumnCount)
             {
-                int columnIndex = kanbanData.Columns.Count;
-                kanbanData.Columns.Add(new ColumnData { columnTitle = $"Edit Column Title: {columnIndex + 1}" });
+                int columnIndex = kanbanData.columns.Count;
+                kanbanData.columns.Add(new ColumnData { columnTitle = $"Edit Column Title: {columnIndex + 1}" });
             }
 
             columnContainer.Clear();
             boardEditorBox.Clear();
             extraColumnSlider.value = 0;
             dueDate.SetValueWithoutNotify("DD/MM/YYYY");
+            projectTitle.SetValueWithoutNotify("Edit Project Title:");
+            //kanbanData.selectedBackground = "None";
 
-            foreach (var columnData in kanbanData.Columns)
+            foreach (var columnData in kanbanData.columns)
             {
                 LoadSavedColumnData(columnData);
 
-                var columnIndex = kanbanData.Columns.IndexOf(columnData);
+                var columnIndex = kanbanData.columns.IndexOf(columnData);
                 var taskContainer = columnContainer.Children().ElementAt(columnIndex).Q<VisualElement>("TaskBox");
             }
 
             MarkDirtyAndSave();
         });
         #endregion
+    }
+    private double debugMessageHideTime = 0;
+    private bool debugMessageVisible = false;
+    private void DisplayDebugMessage(string message, float duration = 5f)
+    {
+        var debugBox = rootVisualElement.Q<Label>("DebugText");
+        debugBox.text = message;
+        debugBox.style.display = DisplayStyle.Flex;
+
+        debugMessageHideTime = EditorApplication.timeSinceStartup + duration;
+        if (!debugMessageVisible)
+        {
+            EditorApplication.update += DebugBoxUpdate;
+            debugMessageVisible = true;
+        }
+    }
+
+    private void DebugBoxUpdate() // Used to get the time since startup and hide the message after a duration
+    {
+        if (EditorApplication.timeSinceStartup >= debugMessageHideTime)
+        {
+            var debugBox = rootVisualElement.Q<Label>("DebugText");
+            debugBox.style.display = DisplayStyle.None;
+            EditorApplication.update -= DebugBoxUpdate;
+            debugMessageVisible = false;
+        }
     }
 
     private void LoadSavedColumnData(ColumnData columnData)
@@ -279,7 +352,7 @@ public class KanbanBoardEditorWindow : EditorWindow
             TextField existingTitleField = child.Q<TextField>("ColumnTitle");
             if (existingTitleField != null && existingTitleField.value == columnData.columnTitle)
             {
-                //Debug.LogWarning($"Column with title '{columnData.columnTitle}' already exists in the UI.");
+                DisplayDebugMessage($"Column with title '{columnData.columnTitle}' already exists in the UI.", 5f);
                 return; // Prevent duplicate instantiation
             }
         }
@@ -412,7 +485,7 @@ public class KanbanBoardEditorWindow : EditorWindow
 
                     if (taskBox.childCount >= 10)
                     {
-                        Debug.Log("Sorry, that column is full"); // Check if the column is full
+                        DisplayDebugMessage("This column is full, please drop in another column or the Board Editor.", 5f); // Display message if column is full
                         originalParent.Add(taskCard); // Reset to original parent if column is full
                         taskCard.style.left = originalPosition.x;
                         taskCard.style.top = originalPosition.y;
@@ -433,22 +506,22 @@ public class KanbanBoardEditorWindow : EditorWindow
                 var taskData = taskCard.userData as TaskData;
 
                 // Remove from unassigned if present
-                kanbanData.UnassignedTaskBox.Remove(taskData);
+                kanbanData.unassignedTaskBox.Remove(taskData);
 
                 // Remove from all columns (in case it was moved from another column)
-                foreach (var columnData in kanbanData.Columns)
+                foreach (var columnData in kanbanData.columns)
                 {
                     columnData.tasks.Remove(taskData);
                 }
 
-                kanbanData.Columns[newParentColumnIndex].tasks.Add(taskData);
+                kanbanData.columns[newParentColumnIndex].tasks.Add(taskData);
                 taskData.parentColumnIndex = newParentColumnIndex; // Update the parent column index
 
                 newParentTaskBox.Add(taskCard); // Add the task card to the new parent task box
 
                 // Reset card position so they sit in columns correctly
-                taskCard.style.left = 0;
-                taskCard.style.top = 0;
+
+                ResetCardPosition(taskCard);
 
                 MarkDirtyAndSave();
             }
@@ -464,22 +537,21 @@ public class KanbanBoardEditorWindow : EditorWindow
 
                     var taskData = taskCard.userData as TaskData;
 
-                    foreach (var columnData in kanbanData.Columns)
+                    foreach (var columnData in kanbanData.columns)
                     {
                         columnData.tasks.Remove(taskData);
                     }
 
-                    if (kanbanData.UnassignedTaskBox.Count == 0 || kanbanData.UnassignedTaskBox.Contains(taskData))
+                    if (kanbanData.unassignedTaskBox.Count == 0 || kanbanData.unassignedTaskBox.Contains(taskData))
                     {
-                        if (!kanbanData.UnassignedTaskBox.Contains(taskData))
-                            kanbanData.UnassignedTaskBox.Add(taskData);
+                        if (!kanbanData.unassignedTaskBox.Contains(taskData))
+                            kanbanData.unassignedTaskBox.Add(taskData);
 
                         taskData.parentColumnIndex = -1; // Reset the parent column index
 
                         boardEditorBox.Add(taskCard); // Add the task card to the BoardEditor
 
-                        taskCard.style.left = 0; // Reset the left position
-                        taskCard.style.top = 0; // Reset the top position
+                        ResetCardPosition(taskCard);
 
                         MarkDirtyAndSave();
                     }
@@ -494,8 +566,7 @@ public class KanbanBoardEditorWindow : EditorWindow
                 else // Not dropped in a valid area; reset to original parent
                 {
                     originalParent.Add(taskCard);
-                    taskCard.style.left = originalPosition.x;
-                    taskCard.style.top = originalPosition.y;
+                    ResetCardPosition(taskCard); // Reset the position to original
                 }
             }
 
@@ -503,20 +574,11 @@ public class KanbanBoardEditorWindow : EditorWindow
         }
     }
 
-    //private void ApplyVisualOnState(VisualElement taskCard)
-    //{
-    //    //apply visual changes based on the task state
-
-    //    switch ()
-    //    {
-    //        case KanbanTaskState.Working:
-    //            taskCard.style.backgroundColor = new Color(0.5f, 0.5f, 1f); // blue
-    //            break;
-    //        case KanbanTaskState.Bugged:
-    //            taskCard.style.backgroundColor = new Color(1f, 0.5f, 0.5f); // red
-    //            break;
-    //    }
-    //}
+    void ResetCardPosition(VisualElement taskCard)
+    {
+        taskCard.style.left = 0;
+        taskCard.style.top = 0;
+    }
 
     private void DebounceAndSaveColumnTitles(Action updateAction, TextField columnTitle)
     {

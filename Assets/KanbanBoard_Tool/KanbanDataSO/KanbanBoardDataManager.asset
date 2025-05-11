@@ -12,19 +12,104 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4047943f4df3a3d46b24b4f9f962f982, type: 3}
   m_Name: KanbanBoardDataManager
   m_EditorClassIdentifier: 
-  Columns:
-  - columnTitle: 'Edit Column Title: 1'
-    titleBorderColor: {r: 1, g: 0.37254903, b: 0, a: 1}
-    tasks: []
-  - columnTitle: 'Edit Column Title: 2'
-    titleBorderColor: {r: 1, g: 0.37254903, b: 0, a: 1}
-    tasks: []
-  - columnTitle: 'Edit Column Title: 3'
-    titleBorderColor: {r: 1, g: 0.37254903, b: 0, a: 1}
-    tasks: []
-  - columnTitle: 'Edit Column Title: 4'
-    titleBorderColor: {r: 1, g: 0.37254903, b: 0, a: 1}
-    tasks: []
-  UnassignedTaskBox: []
-  sliderValue: 0
-  dueDate: DD/MM/YYYY
+  columns:
+  - columnTitle: 'Bugged Tasks:'
+    titleBorderColor: {r: 1, g: 0, b: 0, a: 1}
+    tasks:
+    - taskText: 
+      taskColour: {r: 1, g: 0, b: 0, a: 1}
+      taskState: 2
+      parentColumnIndex: 0
+    - taskText: 
+      taskColour: {r: 1, g: 0, b: 0, a: 1}
+      taskState: 2
+      parentColumnIndex: 0
+    - taskText: 'Edit Task Description:'
+      taskColour: {r: 1, g: 0, b: 0, a: 1}
+      taskState: 0
+      parentColumnIndex: 0
+  - columnTitle: 'Tasks To Start:'
+    titleBorderColor: {r: 1, g: 0.4431373, b: 0, a: 1}
+    tasks:
+    - taskText: 
+      taskColour: {r: 1, g: 0.4431373, b: 0, a: 1}
+      taskState: 5
+      parentColumnIndex: 1
+    - taskText: 
+      taskColour: {r: 1, g: 0.4431373, b: 0, a: 1}
+      taskState: 6
+      parentColumnIndex: 1
+    - taskText: 
+      taskColour: {r: 1, g: 0.4431373, b: 0, a: 1}
+      taskState: 6
+      parentColumnIndex: 1
+    - taskText: 
+      taskColour: {r: 1, g: 0.4431373, b: 0, a: 1}
+      taskState: 7
+      parentColumnIndex: 1
+  - columnTitle: Tasks to Polish
+    titleBorderColor: {r: 1, g: 0.81539816, b: 0, a: 1}
+    tasks:
+    - taskText: 
+      taskColour: {r: 1, g: 0.81568635, b: 0, a: 1}
+      taskState: 3
+      parentColumnIndex: 2
+    - taskText: 
+      taskColour: {r: 1, g: 0.81568635, b: 0, a: 1}
+      taskState: 3
+      parentColumnIndex: 2
+  - columnTitle: 'Completed Tasks:'
+    titleBorderColor: {r: 0.107794166, g: 1, b: 0, a: 1}
+    tasks:
+    - taskText: 'Edit Task Description:'
+      taskColour: {r: 0.10588236, g: 1, b: 0, a: 1}
+      taskState: 4
+      parentColumnIndex: 3
+    - taskText: 'Edit Task Description:'
+      taskColour: {r: 0.10588236, g: 1, b: 0, a: 1}
+      taskState: 4
+      parentColumnIndex: 3
+    - taskText: 'Edit Task Description:'
+      taskColour: {r: 0.10588236, g: 1, b: 0, a: 1}
+      taskState: 4
+      parentColumnIndex: 3
+    - taskText: 'Edit Task Description:'
+      taskColour: {r: 0.10588236, g: 1, b: 0, a: 1}
+      taskState: 4
+      parentColumnIndex: 3
+    - taskText: 'Edit Task Description:'
+      taskColour: {r: 0.10588236, g: 1, b: 0, a: 1}
+      taskState: 4
+      parentColumnIndex: 3
+  - columnTitle: 'Tasks Overdue:'
+    titleBorderColor: {r: 1, g: 0, b: 0.9449339, a: 1}
+    tasks:
+    - taskText: 
+      taskColour: {r: 1, g: 0, b: 0.9450981, a: 1}
+      taskState: 0
+      parentColumnIndex: 4
+  - columnTitle: 'Edit Column Title: 6'
+    titleBorderColor: {r: 1, g: 1, b: 1, a: 1}
+    tasks:
+    - taskText: 'Edit Task Description:'
+      taskColour: {r: 1, g: 1, b: 1, a: 1}
+      taskState: 0
+      parentColumnIndex: 5
+    - taskText: 'Edit Task Description:'
+      taskColour: {r: 1, g: 1, b: 1, a: 1}
+      taskState: 0
+      parentColumnIndex: 5
+  unassignedTaskBox:
+  - taskText: 'Edit Task Description:'
+    taskColour: {r: 0, g: 0.7137255, b: 1, a: 1}
+    taskState: 0
+    parentColumnIndex: -1
+  backgroundList:
+  - None
+  - Cityscape
+  - Waterfall
+  - Ravine
+  selectedBackground: Ravine
+  sliderValue: 2
+  dueDate: 13/05/2025
+  projectTitle: Tools Dev - b022918m
