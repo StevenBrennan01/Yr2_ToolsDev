@@ -99,11 +99,7 @@ MonoBehaviour:
       taskColour: {r: 1, g: 1, b: 1, a: 1}
       taskState: 0
       parentColumnIndex: 5
-  unassignedTaskBox:
-  - taskText: 'Edit Task Description:'
-    taskColour: {r: 0, g: 0.7137255, b: 1, a: 1}
-    taskState: 0
-    parentColumnIndex: -1
+  unassignedTaskBox: []
   backgroundList:
   - None
   - Cityscape

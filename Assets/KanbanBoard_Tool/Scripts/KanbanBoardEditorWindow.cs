@@ -320,9 +320,9 @@ public class KanbanBoardEditorWindow : EditorWindow
     private bool debugMessageVisible = false;
     private void DisplayDebugMessage(string message, float duration = 5f)
     {
-        var debugBox = rootVisualElement.Q<Label>("DebugText");
-        debugBox.text = message;
-        debugBox.style.display = DisplayStyle.Flex;
+        Label debugText = rootVisualElement.Q<Label>("DebugText");
+        debugText.text = message;
+        debugText.style.display = DisplayStyle.Flex;
 
         debugMessageHideTime = EditorApplication.timeSinceStartup + duration;
         if (!debugMessageVisible)
@@ -336,7 +336,7 @@ public class KanbanBoardEditorWindow : EditorWindow
     {
         if (EditorApplication.timeSinceStartup >= debugMessageHideTime)
         {
-            var debugBox = rootVisualElement.Q<Label>("DebugText");
+            Label debugBox = rootVisualElement.Q<Label>("DebugText");
             debugBox.style.display = DisplayStyle.None;
             EditorApplication.update -= DebugBoxUpdate;
             debugMessageVisible = false;
